@@ -1,0 +1,71 @@
+﻿@model OnlineShoppingWebsite.Models.Category
+
+@{
+    ViewBag.Title = "Xóa danh mục";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+    bool hasProducts = ViewBag.HasProducts != null && (bool)ViewBag.HasProducts;
+    int productCount = ViewBag.ProductCount != null ? (int)ViewBag.ProductCount : 0;
+}
+
+<div class="auth-wrapper" style="max-width: 580px;">
+    <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle);">
+        <h2 style="font-size: 1.5rem; color: var(--color-danger); margin-bottom: 0.25rem;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Xóa danh mục
+        </h2>
+        <p style="color: var(--text-primary); font-size: 1rem; font-weight: 600; margin: 0;">
+            Bạn có chắc chắn muốn xóa danh mục này?
+        </p>
+    </div>
+
+    @if (hasProducts)
+    {
+        <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
+            <div>
+                <strong><i class="fa-solid fa-ban"></i> CẢNH BÁO KHÓA NGOẠI:</strong>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem;">
+                    Danh mục này hiện đang có <strong>@productCount sản phẩm</strong> thuộc về nó.
+                    Bạn <strong>không thể xóa</strong> danh mục này khi còn sản phẩm trực thuộc (để đảm bảo tính toàn vẹn dữ liệu). Vui lòng chuyển hoặc xóa các sản phẩm đó trước!
+                </p>
+            </div>
+        </div>
+    }
+
+    <table class="table-custom" style="width: 100%; margin-bottom: 2rem;">
+        <tbody>
+            <tr>
+                <td style="width: 150px; font-weight: 700; color: var(--text-muted);">Mã danh mục:</td>
+                <td>#@Model.CategoryID</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 700; color: var(--text-muted);">Tên danh mục:</td>
+                <td><strong style="color: var(--color-primary); font-size: 1.1rem;">@Model.CategoryName</strong></td>
+            </tr>
+            <tr>
+                <td style="font-weight: 700; color: var(--text-muted);">Số lượng sản phẩm:</td>
+                <td>@productCount sản phẩm</td>
+            </tr>
+        </tbody>
+    </table>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div style="display: flex; gap: 1rem;">
+            @if (hasProducts)
+            {
+                <button type="button" class="btn btn-disabled btn-lg" disabled style="flex: 1;">
+                    <i class="fa-solid fa-ban"></i> Không thể xóa
+                </button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-danger btn-lg" style="flex: 1;">
+                    <i class="fa-solid fa-trash"></i> Xác nhận xóa
+                </button>
+            }
+            <a href="@Url.Action("Index")" class="btn btn-outline btn-lg">
+                Quay lại danh sách
+            </a>
+        </div>
+    }
+</div>

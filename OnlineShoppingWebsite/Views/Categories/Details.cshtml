@@ -1,0 +1,57 @@
+﻿@model OnlineShoppingWebsite.Models.Category
+
+@{
+    ViewBag.Title = "Chi tiết danh mục - " + Model.CategoryName;
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<div class="auth-wrapper" style="max-width: 850px;">
+    <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem;">Danh mục: @Model.CategoryName</h2>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">Mã danh mục: #@Model.CategoryID</p>
+        </div>
+        <div>
+            @Html.ActionLink("Sửa tên", "Edit", new { id = Model.CategoryID }, new { @class = "btn btn-primary btn-sm" })
+            @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-outline btn-sm" })
+        </div>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+        <h4 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--color-primary);">
+            Các sản phẩm đang thuộc danh mục này (@(Model.Products != null ? Model.Products.Count : 0) sản phẩm):
+        </h4>
+
+        @if (Model.Products != null && Model.Products.Any())
+        {
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;">
+                @foreach (var p in Model.Products)
+                {
+                    <div style="border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.75rem; background: var(--bg-surface-secondary); text-align: center;">
+                        <img src="@Url.Content("~/Content/images/" + p.ImageUrl)"
+                             alt="@p.ProductName"
+                             style="width: 100%; height: 140px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 0.5rem;"
+                             onerror="this.src='https://placehold.co/150x200/f1f5f9/334155?text=Ảnh';" />
+                        <strong style="display: block; font-size: 0.875rem; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            @p.ProductName
+                        </strong>
+                        <span style="color: var(--color-danger); font-weight: 700; font-size: 0.875rem;">
+                            @p.Price.ToString("#,##0") đ
+                        </span>
+                        <div style="margin-top: 0.5rem;">
+                            <a href="@Url.Action("Edit", "Products", new { id = p.ProductID })" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.2rem 0.5rem;">
+                                Sửa SP
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                Chưa có sản phẩm nào thuộc danh mục này.
+            </div>
+        }
+    </div>
+</div>

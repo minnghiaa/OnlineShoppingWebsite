@@ -1,0 +1,248 @@
+﻿@model OnlineShoppingWebsite.Models.Product
+
+@{
+    ViewBag.Title = Model.ProductName + " - FASHION HUB";
+    var relatedProducts = ViewBag.RelatedProducts as List<OnlineShoppingWebsite.Models.Product>;
+}
+
+<!-- BREADCRUMB -->
+<nav style="margin-bottom: 2rem; font-size: 0.875rem; color: var(--text-muted);">
+    <a href="@Url.Action("Index", "Home")" style="color: var(--text-secondary);"><i class="fa-solid fa-house"></i> Trang chủ</a>
+    <span style="margin: 0 0.5rem;">/</span>
+    <a href="@Url.Action("Index", "Store")" style="color: var(--text-secondary);">Cửa hàng</a>
+    <span style="margin: 0 0.5rem;">/</span>
+    <a href="@Url.Action("Index", "Store", new { categoryId = Model.CategoryID })" style="color: var(--text-secondary);">
+        @(Model.Category != null ? Model.Category.CategoryName : "Danh mục")
+    </a>
+    <span style="margin: 0 0.5rem;">/</span>
+    <span style="color: var(--color-primary); font-weight: 600;">@Model.ProductName</span>
+</nav>
+
+<!-- PRODUCT DETAIL GRID -->
+<div class="product-detail-grid">
+    <!-- CỘT TRÁI: HÌNH ẢNH SẢN PHẨM -->
+    <div class="product-detail-gallery">
+        <img src="@Url.Content("~/Content/images/" + Model.ImageUrl)"
+             alt="@Model.ProductName"
+             class="product-detail-img"
+             onerror="this.src='https://placehold.co/600x800/f1f5f9/334155?text=FashionHub';" />
+    </div>
+
+    <!-- CỘT PHẢI: CHI TIẾT & HÀNH ĐỘNG MUA HÀNG -->
+    <div class="product-detail-content">
+        <div class="product-detail-category">
+            <i class="fa-solid fa-tag"></i> @(Model.Category != null ? Model.Category.CategoryName : "Thời trang cao cấp")
+        </div>
+
+        <h1 class="product-detail-title">
+            @Model.ProductName
+        </h1>
+
+        <!-- ĐÁNH GIÁ & MÃ SẢN PHẨM -->
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: 0.875rem; color: var(--text-muted);">
+            <div style="color: #f59e0b; display: flex; gap: 2px;">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <span>(Đánh giá 5.0 - Chuẩn hàng cao cấp)</span>
+            <span>|</span>
+            <span>Mã SP: <strong>#@Model.ProductID.ToString("D4")</strong></span>
+        </div>
+
+        <!-- GIÁ BÁN -->
+        <div class="product-detail-price">
+            @string.Format("{0:N0} đ", Model.Price)
+        </div>
+
+        <!-- KIỂM SOÁT TỒN KHO (CORE BUSINESS) -->
+        @if (Model.StockQuantity > 0)
+        {
+            <div class="product-detail-stock-badge" style="background-color: var(--color-success-bg); color: var(--color-success); border: 1px solid #bbf7d0;">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Còn hàng (<strong>@Model.StockQuantity</strong> sản phẩm sẵn có trong kho)</span>
+            </div>
+        }
+        else
+        {
+            <div class="product-detail-stock-badge" style="background-color: var(--color-danger-bg); color: var(--color-danger); border: 1px solid #fecaca;">
+                <i class="fa-solid fa-circle-xmark"></i>
+                <span>Tạm hết hàng (Sản phẩm demo nghiệp vụ hết kho)</span>
+            </div>
+        }
+
+        <!-- MÔ TẢ SẢN PHẨM -->
+        <div class="product-detail-description">
+            <h4 style="font-size: 0.9375rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; color: var(--color-primary);">
+                Mô tả sản phẩm:
+            </h4>
+            <p>
+                @(string.IsNullOrWhiteSpace(Model.Description) ? "Sản phẩm thời trang cao cấp với chất liệu bền đẹp, đường may tinh xảo, đem lại cảm giác tự tin và sang trọng cho người mặc." : Model.Description)
+            </p>
+        </div>
+
+        <!-- FORM MUA HÀNG & CHỌN SỐ LƯỢNG -->
+        @if (Model.StockQuantity > 0)
+        {
+            <!-- Form chuẩn bị tích hợp CartController ở Giai đoạn 4 -->
+            using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { id = "addToCartForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="productId" value="@Model.ProductID" />
+
+                <div class="quantity-control-group">
+                    <span style="font-weight: 600; font-size: 0.9375rem;">Số lượng:</span>
+                    <div class="quantity-control">
+                        <button type="button" class="qty-btn" onclick="decreaseQty()">-</button>
+                        <input type="number" id="buyQuantity" name="quantity" class="qty-input" value="1" min="1" max="@Model.StockQuantity" readonly />
+                        <button type="button" class="qty-btn" onclick="increaseQty(@Model.StockQuantity)">+</button>
+                    </div>
+                    <span style="font-size: 0.8125rem; color: var(--text-muted);">
+                        (Tối đa: @Model.StockQuantity)
+                    </span>
+                </div>
+
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button type="submit" class="btn btn-primary btn-lg" style="flex: 1; min-width: 220px;">
+                        <i class="fa-solid fa-cart-plus"></i> Thêm Vào Giỏ Hàng
+                    </button>
+                    <a href="@Url.Action("Index", "Store")" class="btn btn-outline btn-lg">
+                        <i class="fa-solid fa-arrow-left"></i> Tiếp Tục Xem
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <!-- KHI HẾT HÀNG: CHẶN THÊM VÀO GIỎ -->
+            <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Sản phẩm này hiện đã <strong>HẾT HÀNG</strong> trong kho. Không thể thực hiện đặt mua!</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="button" class="btn btn-disabled btn-lg" disabled style="flex: 1;">
+                    <i class="fa-solid fa-ban"></i> Hết Hàng
+                </button>
+                <a href="@Url.Action("Index", "Store")" class="btn btn-outline btn-lg">
+                    <i class="fa-solid fa-arrow-left"></i> Xem Mẫu Khác
+                </a>
+            </div>
+        }
+
+        <!-- CAM KẾT DỊCH VỤ -->
+        <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; font-size: 0.8125rem; color: var(--text-secondary);">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-truck-fast" style="color: var(--color-accent); font-size: 1.25rem;"></i>
+                <span>Giao hàng toàn quốc</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-rotate-left" style="color: var(--color-accent); font-size: 1.25rem;"></i>
+                <span>Đổi trả trong 7 ngày</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-shield-check" style="color: var(--color-accent); font-size: 1.25rem;"></i>
+                <span>Chính hãng 100%</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SẢN PHẨM LIÊN QUAN (RELATED PRODUCTS) -->
+@if (relatedProducts != null && relatedProducts.Any())
+{
+    <section style="margin-top: 4rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--border-subtle);">
+            <div>
+                <span style="color: var(--color-accent); font-weight: 700; font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 1px;">
+                    GỢI Ý CHO BẠN
+                </span>
+                <h3 style="font-size: 1.5rem; margin-top: 0.25rem;">Sản Phẩm Cùng Danh Mục</h3>
+            </div>
+            <a href="@Url.Action("Index", "Store", new { categoryId = Model.CategoryID })" style="font-weight: 600; font-size: 0.875rem; color: var(--color-primary); display: flex; align-items: center; gap: 0.35rem;">
+                Xem tất cả <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="product-grid">
+            @foreach (var item in relatedProducts)
+            {
+                <div class="product-card">
+                    <div class="product-img-wrap">
+                        <a href="@Url.Action("Details", "Store", new { id = item.ProductID })">
+                            <img src="@Url.Content("~/Content/images/" + item.ImageUrl)"
+                                 alt="@item.ProductName"
+                                 class="product-img"
+                                 loading="lazy"
+                                 onerror="this.src='https://placehold.co/600x800/f1f5f9/334155?text=FashionHub';" />
+                        </a>
+                        @if (item.StockQuantity > 0)
+                        {
+                            <span class="badge-stock badge-in-stock">Còn @item.StockQuantity sp</span>
+                        }
+                        else
+                        {
+                            <span class="badge-stock badge-out-stock">Hết hàng</span>
+                        }
+                    </div>
+
+                    <div class="product-info">
+                        <div class="product-category">
+                            @(item.Category != null ? item.Category.CategoryName : "")
+                        </div>
+                        <a href="@Url.Action("Details", "Store", new { id = item.ProductID })" class="product-title" title="@item.ProductName">
+                            @item.ProductName
+                        </a>
+                        <div class="product-price-stock">
+                            <div class="product-price">
+                                @string.Format("{0:N0} đ", item.Price)
+                            </div>
+                            @if (item.StockQuantity > 0)
+                            {
+                                <a href="@Url.Action("Details", "Store", new { id = item.ProductID })" class="btn btn-primary btn-sm product-card-btn">
+                                    <i class="fa-solid fa-eye"></i> Xem Chi Tiết
+                                </a>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-disabled btn-sm product-card-btn" disabled>
+                                    <i class="fa-solid fa-ban"></i> Hết Hàng
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@section scripts {
+    <script>
+        function increaseQty(maxStock) {
+            var input = document.getElementById('buyQuantity');
+            if (input) {
+                var current = parseInt(input.value) || 1;
+                if (current < maxStock) {
+                    input.value = current + 1;
+                } else {
+                    alert('Bạn chỉ có thể đặt tối đa ' + maxStock + ' sản phẩm (bằng tồn kho hiện có).');
+                }
+            }
+        }
+
+        function decreaseQty() {
+            var input = document.getElementById('buyQuantity');
+            if (input) {
+                var current = parseInt(input.value) || 1;
+                if (current > 1) {
+                    input.value = current - 1;
+                }
+            }
+        }
+    </script>
+}

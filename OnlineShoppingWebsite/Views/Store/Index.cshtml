@@ -1,0 +1,305 @@
+﻿@model OnlineShoppingWebsite.Models.StoreIndexViewModel
+
+@{
+    ViewBag.Title = "Cửa Hàng Thời Trang Thiết Kế";
+}
+
+<!-- BREADCRUMB -->
+<nav style="margin-bottom: 1.5rem; font-size: 0.875rem; color: var(--text-muted);">
+    <a href="@Url.Action("Index", "Home")" style="color: var(--text-secondary);"><i class="fa-solid fa-house"></i> Trang chủ</a>
+    <span style="margin: 0 0.5rem;">/</span>
+    <span style="color: var(--color-primary); font-weight: 600;">Cửa hàng thời trang</span>
+</nav>
+
+<!-- STORE BANNER HEADER -->
+<div style="background: linear-gradient(135deg, #18181b 0%, #27272a 100%); color: #ffffff; padding: 2.5rem 2rem; border-radius: var(--radius-lg); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <span style="color: var(--color-accent); font-weight: 700; letter-spacing: 2px; font-size: 0.8125rem; text-transform: uppercase;">
+            BỘ SƯU TẬP MỚI
+        </span>
+        <h1 style="color: #ffffff; font-size: 2rem; margin-top: 0.25rem; margin-bottom: 0.5rem; font-family: var(--font-heading);">
+            Thời Trang Thiết Kế Hiện Đại
+        </h1>
+        <p style="color: #94a3b8; font-size: 0.9375rem; margin: 0;">
+            Khám phá 16+ mẫu thiết kế tinh tế với chất liệu cao cấp và chuẩn phom dáng
+        </p>
+    </div>
+    <div>
+        <span class="status-badge status-completed" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+            <i class="fa-solid fa-truck-fast"></i> Miễn phí giao hàng từ 500k
+        </span>
+    </div>
+</div>
+
+<!-- STORE CONTAINER (SIDEBAR & PRODUCT GRID) -->
+<div class="store-container">
+    <!-- SIDEBAR BỘ LỌC -->
+    <aside class="store-sidebar">
+        <!-- 1. BỘ LỌC DANH MỤC -->
+        <div class="sidebar-section">
+            <h3 class="sidebar-title"><i class="fa-solid fa-layer-group" style="color: var(--color-accent);"></i> Danh Mục</h3>
+            <ul class="category-filter-list">
+                <li>
+                    <a href="@Url.Action("Index", "Store", new { search = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, sort = Model.CurrentSort })"
+                       class="category-filter-link @(Model.CurrentCategoryID == null ? "active" : "")">
+                        <span>Tất cả sản phẩm</span>
+                        <span style="font-size: 0.75rem; color: var(--text-light);">(@Model.Categories.Sum(c => c.Products.Count(p => p.IsActive)))</span>
+                    </a>
+                </li>
+                @foreach (var cat in Model.Categories)
+                {
+                    var count = cat.Products.Count(p => p.IsActive);
+                    <li>
+                        <a href="@Url.Action("Index", "Store", new { categoryId = cat.CategoryID, search = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, sort = Model.CurrentSort })"
+                           class="category-filter-link @(Model.CurrentCategoryID == cat.CategoryID ? "active" : "")">
+                            <span>@cat.CategoryName</span>
+                            <span style="font-size: 0.75rem; color: var(--text-light);">(@count)</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <!-- 2. BỘ LỌC KHOẢNG GIÁ -->
+        <div class="sidebar-section">
+            <h3 class="sidebar-title"><i class="fa-solid fa-filter-circle-dollar" style="color: var(--color-accent);"></i> Khoảng Giá (VNĐ)</h3>
+            <form action="@Url.Action("Index", "Store")" method="get" class="price-filter-form">
+                @if (Model.CurrentCategoryID.HasValue)
+                {
+                    <input type="hidden" name="categoryId" value="@Model.CurrentCategoryID" />
+                }
+                @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                {
+                    <input type="hidden" name="search" value="@Model.SearchTerm" />
+                }
+                @if (!string.IsNullOrEmpty(Model.CurrentSort))
+                {
+                    <input type="hidden" name="sort" value="@Model.CurrentSort" />
+                }
+
+                <div class="price-inputs">
+                    <input type="number" name="minPrice" class="price-input" placeholder="Từ..." min="0" step="10000" value="@Model.MinPrice" />
+                    <span class="price-separator">-</span>
+                    <input type="number" name="maxPrice" class="price-input" placeholder="Đến..." min="0" step="10000" value="@Model.MaxPrice" />
+                </div>
+                <button type="submit" class="btn btn-outline btn-sm btn-block">
+                    <i class="fa-solid fa-filter"></i> Áp dụng giá
+                </button>
+            </form>
+
+            <!-- Mốc giá gợi ý -->
+            <div style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: 1rem;">
+                <a href="@Url.Action("Index", "Store", new { categoryId = Model.CurrentCategoryID, search = Model.SearchTerm, maxPrice = 200000, sort = Model.CurrentSort })"
+                   style="font-size: 0.8125rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-angle-right" style="font-size: 0.7rem;"></i> Dưới 200.000đ
+                </a>
+                <a href="@Url.Action("Index", "Store", new { categoryId = Model.CurrentCategoryID, search = Model.SearchTerm, minPrice = 200000, maxPrice = 500000, sort = Model.CurrentSort })"
+                   style="font-size: 0.8125rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-angle-right" style="font-size: 0.7rem;"></i> 200.000đ - 500.000đ
+                </a>
+                <a href="@Url.Action("Index", "Store", new { categoryId = Model.CurrentCategoryID, search = Model.SearchTerm, minPrice = 500000, sort = Model.CurrentSort })"
+                   style="font-size: 0.8125rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-angle-right" style="font-size: 0.7rem;"></i> Trên 500.000đ
+                </a>
+            </div>
+        </div>
+
+        <!-- 3. NÚT XÓA BỘ LỌC -->
+        @if (Model.CurrentCategoryID != null || !string.IsNullOrEmpty(Model.SearchTerm) || Model.MinPrice != null || Model.MaxPrice != null)
+        {
+            <div class="sidebar-section">
+                <a href="@Url.Action("Index", "Store")" class="btn btn-outline btn-sm btn-block" style="color: var(--color-danger); border-color: #fecaca;">
+                    <i class="fa-solid fa-arrows-rotate"></i> Xóa tất cả bộ lọc
+                </a>
+            </div>
+        }
+    </aside>
+
+    <!-- MAIN PRODUCT LIST AREA -->
+    <main class="store-main">
+        <!-- TOOLBAR: THÔNG TIN TÌM KIẾM & SẮP XẾP -->
+        <div class="store-toolbar">
+            <div class="store-toolbar-info">
+                Tìm thấy <strong>@Model.TotalItems</strong> sản phẩm
+                @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                {
+                    <span>cho từ khóa "<strong>@Model.SearchTerm</strong>"</span>
+                }
+            </div>
+
+            <!-- FORM SẮP XẾP -->
+            <form action="@Url.Action("Index", "Store")" method="get" class="store-toolbar-sort">
+                @if (Model.CurrentCategoryID.HasValue)
+                {
+                    <input type="hidden" name="categoryId" value="@Model.CurrentCategoryID" />
+                }
+                @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                {
+                    <input type="hidden" name="search" value="@Model.SearchTerm" />
+                }
+                @if (Model.MinPrice.HasValue)
+                {
+                    <input type="hidden" name="minPrice" value="@Model.MinPrice" />
+                }
+                @if (Model.MaxPrice.HasValue)
+                {
+                    <input type="hidden" name="maxPrice" value="@Model.MaxPrice" />
+                }
+
+                <label for="sortSelect" style="font-size: 0.875rem; color: var(--text-secondary); white-space: nowrap;">
+                    Sắp xếp:
+                </label>
+                <select id="sortSelect" name="sort" class="sort-select" onchange="this.form.submit()">
+                    <option value="" @(string.IsNullOrEmpty(Model.CurrentSort) ? "selected" : "")>Mới nhất</option>
+                    <option value="price_asc" @(Model.CurrentSort == "price_asc" ? "selected" : "")>Giá: Thấp đến Cao</option>
+                    <option value="price_desc" @(Model.CurrentSort == "price_desc" ? "selected" : "")>Giá: Cao đến Thấp</option>
+                    <option value="name_asc" @(Model.CurrentSort == "name_asc" ? "selected" : "")>Tên: A - Z</option>
+                </select>
+            </form>
+        </div>
+
+        <!-- PRODUCT GRID -->
+        @if (Model.Products == null || !Model.Products.Any())
+        {
+            <div class="cart-empty-state">
+                <div class="cart-empty-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <h3>Không tìm thấy sản phẩm nào!</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem;">
+                    Rất tiếc, không có sản phẩm nào phù hợp với các tiêu chí tìm kiếm hoặc bộ lọc của bạn.
+                </p>
+                <a href="@Url.Action("Index", "Store")" class="btn btn-primary">
+                    <i class="fa-solid fa-arrow-rotate-left"></i> Xem tất cả sản phẩm
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="product-grid">
+                @foreach (var item in Model.Products)
+                {
+                    <div class="product-card">
+                        <!-- ẢNH & HUY HIỆU TỒN KHO -->
+                        <div class="product-img-wrap">
+                            <a href="@Url.Action("Details", "Store", new { id = item.ProductID })">
+                                <img src="@Url.Content("~/Content/images/" + item.ImageUrl)"
+                                     alt="@item.ProductName"
+                                     class="product-img"
+                                     loading="lazy"
+                                     onerror="this.src='https://placehold.co/600x800/f1f5f9/334155?text=FashionHub';" />
+                            </a>
+
+                            <!-- KIỂM SOÁT TỒN KHO: HUY HIỆU CÒN HÀNG HOẶC HẾT HÀNG -->
+                            @if (item.StockQuantity > 0)
+                            {
+                                <span class="badge-stock badge-in-stock">
+                                    <i class="fa-solid fa-check"></i> Còn @item.StockQuantity sp
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge-stock badge-out-stock">
+                                    <i class="fa-solid fa-ban"></i> Hết hàng
+                                </span>
+                            }
+                        </div>
+
+                        <!-- THÔNG TIN SẢN PHẨM -->
+                        <div class="product-info">
+                            <div class="product-category">
+                                @(item.Category != null ? item.Category.CategoryName : "Thời trang")
+                            </div>
+
+                            <a href="@Url.Action("Details", "Store", new { id = item.ProductID })" class="product-title" title="@item.ProductName">
+                                @item.ProductName
+                            </a>
+
+                            <div class="product-price-stock">
+                                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                    <div class="product-price">
+                                        @string.Format("{0:N0} đ", item.Price)
+                                    </div>
+                                    @if (item.StockQuantity > 0)
+                                    {
+                                        <span class="stock-text available">
+                                            Kho: @item.StockQuantity
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="stock-text empty">
+                                            Hết hàng
+                                        </span>
+                                    }
+                                </div>
+
+                                <!-- NÚT HÀNH ĐỘNG VỚI SẢN PHẨM -->
+                                @if (item.StockQuantity > 0)
+                                {
+                                    <a href="@Url.Action("Details", "Store", new { id = item.ProductID })" class="btn btn-primary btn-sm product-card-btn">
+                                        <i class="fa-solid fa-eye"></i> Xem Chi Tiết
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-disabled btn-sm product-card-btn" disabled title="Sản phẩm tạm thời hết hàng">
+                                        <i class="fa-solid fa-ban"></i> Hết Hàng
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- PHÂN TRANG (PAGINATION) -->
+            if (Model.TotalPages > 1)
+            {
+                <div class="pagination-container">
+                    <!-- Nút Trang trước -->
+                    @if (Model.HasPreviousPage)
+                    {
+                        <a href="@Url.Action("Index", "Store", new { page = Model.CurrentPage - 1, categoryId = Model.CurrentCategoryID, search = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, sort = Model.CurrentSort })"
+                           class="page-btn" title="Trang trước">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="page-btn" style="opacity: 0.4; cursor: not-allowed;"><i class="fa-solid fa-chevron-left"></i></span>
+                    }
+
+                    <!-- Các nút số trang -->
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        if (i == Model.CurrentPage)
+                        {
+                            <span class="page-btn active">@i</span>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Index", "Store", new { page = i, categoryId = Model.CurrentCategoryID, search = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, sort = Model.CurrentSort })"
+                               class="page-btn">
+                                @i
+                            </a>
+                        }
+                    }
+
+                    <!-- Nút Trang sau -->
+                    @if (Model.HasNextPage)
+                    {
+                        <a href="@Url.Action("Index", "Store", new { page = Model.CurrentPage + 1, categoryId = Model.CurrentCategoryID, search = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, sort = Model.CurrentSort })"
+                           class="page-btn" title="Trang sau">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="page-btn" style="opacity: 0.4; cursor: not-allowed;"><i class="fa-solid fa-chevron-right"></i></span>
+                    }
+                </div>
+            }
+        }
+    </main>
+</div>

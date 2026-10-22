@@ -1,0 +1,66 @@
+﻿@model OnlineShoppingWebsite.Models.Product
+
+@{
+    ViewBag.Title = "Xóa sản phẩm";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<div class="auth-wrapper" style="max-width: 650px;">
+    <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle);">
+        <h2 style="font-size: 1.5rem; color: var(--color-danger); margin-bottom: 0.25rem;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Xóa sản phẩm
+        </h2>
+        <p style="color: var(--text-primary); font-size: 1rem; font-weight: 600; margin: 0;">
+            Bạn có chắc chắn muốn xóa vĩnh viễn sản phẩm này khỏi cơ sở dữ liệu không?
+        </p>
+    </div>
+
+    <!-- ẢNH SẢN PHẨM (CHUẨN B05) -->
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <img src="@Url.Content("~/Content/images/" + Model.ImageUrl)"
+                 alt="@Model.ProductName"
+                 style="width: 160px; height: 190px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); box-shadow: var(--shadow-sm);"
+                 onerror="this.src='https://placehold.co/400x500/f1f5f9/334155?text=Ảnh';" />
+        </div>
+    }
+
+    <table class="table-custom" style="width: 100%; margin-bottom: 2rem;">
+        <tbody>
+            <tr>
+                <td style="width: 140px; font-weight: 700; color: var(--text-muted);">Tên sản phẩm:</td>
+                <td><strong style="color: var(--color-primary);">@Model.ProductName</strong></td>
+            </tr>
+            <tr>
+                <td style="font-weight: 700; color: var(--text-muted);">Danh mục:</td>
+                <td>@(Model.Category != null ? Model.Category.CategoryName : "N/A")</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 700; color: var(--text-muted);">Đơn giá:</td>
+                <td><strong style="color: var(--color-danger);">@Model.Price.ToString("#,##0") đ</strong></td>
+            </tr>
+            <tr>
+                <td style="font-weight: 700; color: var(--text-muted);">Số lượng tồn kho:</td>
+                <td>@Model.StockQuantity</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 700; color: var(--text-muted);">Trạng thái:</td>
+                <td>@(Model.IsActive ? "Đang bán" : "Ngừng bán")</td>
+            </tr>
+        </tbody>
+    </table>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-danger btn-lg" style="flex: 1;">
+                <i class="fa-solid fa-trash"></i> Xác nhận xóa
+            </button>
+            <a href="@Url.Action("Index")" class="btn btn-outline btn-lg">
+                Hủy bỏ
+            </a>
+        </div>
+    }
+</div>

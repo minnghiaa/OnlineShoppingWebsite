@@ -1,0 +1,47 @@
+﻿@model OnlineShoppingWebsite.Models.Category
+
+@{
+    ViewBag.Title = "Thêm danh mục mới";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<div class="auth-wrapper" style="max-width: 580px;">
+    <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem;">Thêm danh mục mới</h2>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">Nhập tên nhóm danh mục sản phẩm thời trang</p>
+        </div>
+        <a href="@Url.Action("Index")" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CategoryName, "Tên danh mục thời trang *", htmlAttributes: new { @class = "form-label" })
+            @Html.EditorFor(model => model.CategoryName, new
+            {
+                htmlAttributes = new
+                {
+                    @class = "form-control",
+                    placeholder = "Ví dụ: Đồ Ngủ & Mặc Nhà, Áo Khoác Mùa Đông...",
+                    required = "required"
+                }
+            })
+            @Html.ValidationMessageFor(model => model.CategoryName, "", new { @class = "text-danger" })
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;">
+                <i class="fa-solid fa-check"></i> Lưu danh mục
+            </button>
+            <a href="@Url.Action("Index")" class="btn btn-outline btn-lg">
+                Hủy bỏ
+            </a>
+        </div>
+    }
+</div>

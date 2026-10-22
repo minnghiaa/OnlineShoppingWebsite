@@ -1,0 +1,110 @@
+﻿@model IEnumerable<OnlineShoppingWebsite.Models.Product>
+
+@{
+    ViewBag.Title = "Quản lý sản phẩm";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h2 style="font-size: 1.75rem; margin-bottom: 0.25rem;">QUẢN LÝ SẢN PHẨM</h2>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
+            Quản lý thông tin, giá bán, số lượng tồn kho và ảnh sản phẩm thời trang.
+        </p>
+    </div>
+    <div>
+        @Html.ActionLink("Thêm sản phẩm mới", "Create", null, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
+<!-- Cho phép cuộn ngang khi bảng rộng trên màn hình nhỏ -->
+<div class="cart-table-card" style="padding: 0; overflow-x: auto; box-shadow: var(--shadow-sm);">
+    <table class="table-custom" style="width: 100%; min-width: 900px;">
+        <thead>
+            <tr>
+                <th style="width: 75px; text-align: center;">Hình</th>
+                <th>Tên &amp; Mô tả sản phẩm</th>
+                <th style="width: 170px; text-align: center; white-space: nowrap;">Danh mục</th>
+                <th style="width: 140px; text-align: right; white-space: nowrap;">Đơn giá</th>
+                <th style="width: 100px; text-align: center; white-space: nowrap;">Tồn kho</th>
+                <th style="width: 130px; text-align: center; white-space: nowrap;">Trạng thái</th>
+                <th style="width: 150px; text-align: center; white-space: nowrap;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="text-align: center;">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@Url.Content("~/Content/images/" + item.ImageUrl)"
+                                 alt="@item.ProductName"
+                                 style="width: 55px; height: 72px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); display: inline-block;"
+                                 onerror="this.src='https://placehold.co/150x200/f1f5f9/334155?text=Ảnh';" />
+                        }
+                    </td>
+                    <td>
+                        <strong style="color: var(--color-primary); font-size: 0.95rem; display: block; margin-bottom: 2px;">
+                            @item.ProductName
+                        </strong>
+                        <span style="color: var(--text-muted); font-size: 0.8125rem; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">
+                            @item.Description
+                        </span>
+                    </td>
+                    <td style="text-align: center; white-space: nowrap;">
+                        <span style="font-size: 0.8125rem; background: var(--bg-surface-secondary); padding: 0.3rem 0.65rem; border-radius: var(--radius-sm); font-weight: 600; color: var(--text-secondary); display: inline-block;">
+                            @(item.Category != null ? item.Category.CategoryName : "N/A")
+                        </span>
+                    </td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <strong style="color: var(--color-danger); font-size: 1rem; font-variant-numeric: tabular-nums;">
+                            @item.Price.ToString("#,##0")&nbsp;đ
+                        </strong>
+                    </td>
+                    <td style="text-align: center; white-space: nowrap;">
+                        @if (item.StockQuantity > 0)
+                        {
+                            <span style="color: var(--color-primary); font-weight: 700; font-size: 0.95rem;">
+                                @item.StockQuantity
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="color: var(--color-danger); font-weight: 700; font-size: 0.875rem;">
+                                Hết hàng
+                            </span>
+                        }
+                    </td>
+                    <td style="text-align: center; white-space: nowrap;">
+                        @if (item.IsActive)
+                        {
+                            <span class="status-badge status-completed" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;">
+                                Đang bán
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="status-badge status-cancelled" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;">
+                                Ngừng bán
+                            </span>
+                        }
+                    </td>
+                    <td style="text-align: center; white-space: nowrap;">
+                        <div style="display: inline-flex; gap: 0.35rem; align-items: center; justify-content: center;">
+                            <a href="@Url.Action("Edit", new { id = item.ProductID })" class="btn btn-outline btn-sm" title="Chỉnh sửa sản phẩm" style="padding: 0.35rem 0.6rem;">
+                                <i class="fa-solid fa-pen-to-square"></i> Sửa
+                            </a>
+                            <a href="@Url.Action("Details", new { id = item.ProductID })" class="btn btn-outline btn-sm" title="Xem chi tiết" style="padding: 0.35rem 0.55rem;">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <a href="@Url.Action("Delete", new { id = item.ProductID })" class="btn btn-outline btn-sm" style="color: var(--color-danger); border-color: #fecaca; padding: 0.35rem 0.55rem;" title="Xóa">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

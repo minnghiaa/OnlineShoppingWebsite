@@ -1,0 +1,152 @@
+﻿@model OnlineShoppingWebsite.Models.Product
+
+@{
+    ViewBag.Title = "Thêm sản phẩm";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<div class="auth-wrapper" style="max-width: 760px;">
+    <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem;">Thêm sản phẩm mới</h2>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">Nhập thông tin sản phẩm thời trang và tải ảnh lên hệ thống</p>
+        </div>
+        <a href="@Url.Action("Index")" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    @using (Html.BeginForm("Create", "Products", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductName, "Tên sản phẩm *", htmlAttributes: new { @class = "form-label" })
+            @Html.EditorFor(model => model.ProductName, new
+            {
+                htmlAttributes = new
+                {
+                    @class = "form-control",
+                    placeholder = "Ví dụ: Áo Sơ Mi Lụa Cổ V Thanh Lịch",
+                    required = "required"
+                }
+            })
+            @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, "Mô tả sản phẩm", htmlAttributes: new { @class = "form-label" })
+            @Html.TextAreaFor(model => model.Description, 4, 20, new
+            {
+                @class = "form-control",
+                placeholder = "Ví dụ: Chất liệu lụa satin cao cấp mềm mịn, thoáng mát, form dáng suông công sở hiện đại."
+            })
+            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="form-group">
+                @Html.LabelFor(model => model.CategoryID, "Danh mục thời trang *", htmlAttributes: new { @class = "form-label" })
+                @Html.DropDownList("CategoryID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CategoryID, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Price, "Đơn giá (VNĐ) *", htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Price, new
+                {
+                    htmlAttributes = new
+                    {
+                        @class = "form-control",
+                        type = "number",
+                        min = "0",
+                        step = "1000",
+                        placeholder = "Ví dụ: 350000",
+                        required = "required"
+                    }
+                })
+                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <!-- UPLOAD HÌNH ẢNH & XEM TRƯỚC (IMAGE PREVIEW) -->
+        <div class="form-group" style="background: var(--bg-surface-secondary); padding: 1.25rem; border-radius: var(--radius-md); border: 1px dashed var(--border-strong);">
+            <label class="form-label" style="font-weight: 700;">Hình ảnh sản phẩm</label>
+            <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                <input type="file"
+                       id="imageFile"
+                       name="imageFile"
+                       class="form-control"
+                       style="flex: 1; min-width: 220px;"
+                       accept=".jpg,.jpeg,.png"
+                       onchange="previewImage(event)" />
+
+                <!-- Khung xem trước ảnh tải lên -->
+                <img id="imagePreview"
+                     alt="Ảnh xem trước"
+                     style="display: none; width: 100px; height: 120px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); box-shadow: var(--shadow-sm);" />
+            </div>
+            @Html.ValidationMessage("ImageUrl", "", new { @class = "text-danger" })
+            <small class="text-muted" style="display: block; margin-top: 0.5rem;">
+                <i class="fa-solid fa-circle-info"></i> Chọn file ảnh định dạng JPG, JPEG hoặc PNG. Dung lượng file tối đa 2 MB.
+            </small>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: center; margin-top: 1rem;">
+            <div class="form-group">
+                @Html.LabelFor(model => model.StockQuantity, "Số lượng tồn kho *", htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.StockQuantity, new
+                {
+                    htmlAttributes = new
+                    {
+                        @class = "form-control",
+                        type = "number",
+                        min = "0",
+                        placeholder = "Ví dụ: 25",
+                        required = "required"
+                    }
+                })
+                @Html.ValidationMessageFor(model => model.StockQuantity, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group" style="padding-top: 1.5rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">
+                    @Html.CheckBoxFor(model => model.IsActive, new { @checked = "checked" })
+                    <span>Đang kinh doanh (Hiển thị ngoài cửa hàng)</span>
+                </label>
+                @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Lưu sản phẩm
+            </button>
+            <a href="@Url.Action("Index")" class="btn btn-outline btn-lg">
+                Hủy bỏ
+            </a>
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script>
+        // Hiển thị ảnh xem trước ngay sau khi chọn file từ máy
+        function previewImage(event) {
+            var input = event.target;
+            var preview = document.getElementById("imagePreview");
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = "";
+                preview.style.display = "none";
+            }
+        }
+    </script>
+}

@@ -1,0 +1,310 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - FASHION HUB | Thời Trang Thiết Kế Hiện Đại</title>
+
+    <!-- Font Awesome Icons (v6.5) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Google Fonts: Be Vietnam Pro (Chuẩn typography tiếng Việt 100% không lỗi dấu) & Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Pure CSS3 Design System -->
+    <link rel="stylesheet" href="~/Content/style.css" />
+
+    @RenderSection("styles", required: false)
+</head>
+<body>
+    <!-- 1. TOP BAR PROMOTION -->
+    <aside class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-bar-promo">
+                <span class="badge">Ưu đãi</span>
+                <span>Miễn phí vận chuyển toàn quốc cho đơn hàng từ 500.000đ</span>
+            </div>
+            <div class="top-bar-info">
+                <span><i class="fa-solid fa-phone"></i> Hotline: <strong>02838632052</strong></span>
+                <span><i class="fa-solid fa-clock"></i> nào thích mở, nào thích nghỉ</span>
+                <span><i class="fa-solid fa-location-dot"></i> Hệ thống 1 cửa hàng</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 2. MAIN NAVIGATION HEADER -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <!-- Brand Logo -->
+            <a href="@Url.Action("Index", "Home")" class="brand-logo" title="Về Trang Chủ">
+                <span class="logo-main">FASHION HUB</span>
+                <span class="logo-sub">Modern Apparel & Studio</span>
+            </a>
+
+            <!-- Main Navigation Links -->
+            <nav class="store-nav main-nav" id="mainNav">
+                @Html.ActionLink("Trang Chủ", "Index", "Home", null, new { @class = "nav-link" + (ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? " active" : "") })
+                @Html.ActionLink("Bộ Sưu Tập", "Index", "Store", null, new { @class = "nav-link" + (ViewContext.RouteData.Values["controller"]?.ToString() == "Store" ? " active" : "") })
+                @Html.ActionLink("Giới Thiệu", "About", "Home", null, new { @class = "nav-link" + (ViewContext.RouteData.Values["action"]?.ToString() == "About" ? " active" : "") })
+                @Html.ActionLink("Liên Hệ", "Contact", "Home", null, new { @class = "nav-link" + (ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? " active" : "") })
+            </nav>
+
+            <!-- Search Form -->
+            <div class="header-search">
+                <form action="@Url.Action("Index", "Store")" method="get">
+                    <input type="text" name="search" class="search-input" placeholder="Tìm quần áo, váy, đầm..." value="@Request.QueryString["search"]" />
+                    <button type="submit" class="search-submit-btn" aria-label="Tìm kiếm">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Header Actions (Account & Cart) -->
+            <div class="header-actions">
+                <!-- User Account Handling -->
+                @if (Session["UserName"] != null)
+                {
+                    var roleName = Session["RoleName"] as string ?? "";
+                    if (roleName.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <!-- Admin Menu -->
+                        <div class="user-menu">
+                            <button type="button" class="user-btn">
+                                <i class="fa-solid fa-user-shield" style="color: var(--color-accent);"></i>
+                                <span>@Session["UserName"]</span>
+                                <span class="user-badge-admin">Admin</span>
+                                <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
+                            </button>
+                            <div class="user-dropdown">
+                                <a href="@Url.Action("Index", "Products")" class="dropdown-item">
+                                    <i class="fa-solid fa-shirt"></i> Quản lý Sản phẩm
+                                </a>
+                                <a href="@Url.Action("Index", "Categories")" class="dropdown-item">
+                                    <i class="fa-solid fa-layer-group"></i> Quản lý Danh mục
+                                </a>
+                                <a href="#" class="dropdown-item">
+                                    <i class="fa-solid fa-receipt"></i> Quản lý Đơn hàng
+                                </a>
+                                <a href="#" class="dropdown-item">
+                                    <i class="fa-solid fa-users"></i> Quản lý Khách hàng
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="#" class="dropdown-item" style="color: var(--color-danger);">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                                </a>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Customer Menu -->
+                        <div class="user-menu">
+                            <button type="button" class="user-btn">
+                                <i class="fa-solid fa-circle-user" style="color: var(--color-accent);"></i>
+                                <span>@(Session["FullName"] ?? Session["UserName"])</span>
+                                <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
+                            </button>
+                            <div class="user-dropdown">
+                                <a href="#" class="dropdown-item">
+                                    <i class="fa-solid fa-receipt"></i> Đơn hàng của tôi
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="#" class="dropdown-item" style="color: var(--color-danger);">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <!-- Guest Links -->
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <a href="#" class="btn btn-outline btn-sm" title="Kích hoạt ở Giai đoạn 3 (AccountController)">
+                            <i class="fa-regular fa-user"></i> Đăng nhập
+                        </a>
+                        <a href="#" class="btn btn-primary btn-sm" title="Kích hoạt ở Giai đoạn 3 (AccountController)">
+                            Đăng ký
+                        </a>
+                    </div>
+                }
+
+                <!-- Cart Button -->
+                <a href="#" class="cart-btn" title="Giỏ hàng (Kích hoạt ở Giai đoạn 4)" aria-label="Giỏ hàng">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-badge" id="cartCountBadge">
+                        @(Session["CartCount"] ?? 0)
+                    </span>
+                </a>
+
+                <!-- Nút Mũi Tên Xổ Xuống Quản Lý (Sát góc phải kế bên giỏ hàng) -->
+                <div class="admin-quick-menu">
+                    <button type="button" class="admin-quick-btn" title="Menu Quản lý">
+                        <i class="fa-solid fa-sliders" style="color: var(--color-accent);"></i>
+                        <span>Quản lý</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem;"></i>
+                    </button>
+                    <div class="admin-quick-dropdown">
+                        <div class="admin-dropdown-header">
+                            <i class="fa-solid fa-shield-halved"></i> QUẢN TRỊ CỬA HÀNG
+                        </div>
+                        <a href="@Url.Action("Index", "Products")" class="admin-dropdown-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" ? "active" : "")">
+                            <i class="fa-solid fa-shirt"></i> Quản lý Sản phẩm
+                        </a>
+                        <a href="@Url.Action("Index", "Categories")" class="admin-dropdown-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Categories" ? "active" : "")">
+                            <i class="fa-solid fa-layer-group"></i> Quản lý Danh mục
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button type="button" class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. MAIN BODY & FLASH NOTIFICATIONS -->
+    <main class="main-content container">
+        <!-- Notification Flash Messages -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>@TempData["Success"]</span>
+                </div>
+                <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>@TempData["Error"]</span>
+                </div>
+                <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+            </div>
+        }
+        @if (TempData["Warning"] != null)
+        {
+            <div class="alert alert-warning">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>@TempData["Warning"]</span>
+                </div>
+                <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+            </div>
+        }
+        @if (TempData["Info"] != null)
+        {
+            <div class="alert alert-info">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>@TempData["Info"]</span>
+                </div>
+                <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+            </div>
+        }
+
+        <!-- Render Child Views -->
+        @RenderBody()
+    </main>
+
+    <!-- 4. SITE FOOTER -->
+    <footer class="site-footer">
+        <div class="container footer-top">
+            <div class="footer-grid">
+                <!-- Col 1: Brand Info -->
+                <div class="footer-col">
+                    <div class="brand-logo" style="margin-bottom: 1.25rem;">
+                        <span class="logo-main" style="color: #ffffff;">FASHION HUB</span>
+                        <span class="logo-sub">Modern Apparel & Studio</span>
+                    </div>
+                    <p style="color: #94a3b8; line-height: 1.7; margin-bottom: 1.5rem;">
+                        Thương hiệu thời trang thiết kế hiện đại, tôn vinh nét đẹp thanh lịch và cá tính. Tận hưởng chất lượng vải may cao cấp cùng trải nghiệm mua sắm tiện lợi.
+                    </p>
+                    <div style="display: flex; gap: 1rem; font-size: 1.25rem;">
+                        <a href="#" style="color: #ffffff;"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" style="color: #ffffff;"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" style="color: #ffffff;"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="#" style="color: #ffffff;"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Categories -->
+                <div class="footer-col">
+                    <h4>Danh Mục</h4>
+                    <ul class="footer-links">
+                        <li><a href="@Url.Action("Index", "Store", new { categoryId = 1 })">Áo thời trang</a></li>
+                        <li><a href="@Url.Action("Index", "Store", new { categoryId = 2 })">Quần &amp; Chân váy</a></li>
+                        <li><a href="@Url.Action("Index", "Store", new { categoryId = 3 })">Đầm &amp; Đồ bộ</a></li>
+                        <li><a href="@Url.Action("Index", "Store", new { categoryId = 4 })">Phụ kiện thời trang</a></li>
+                        <li><a href="@Url.Action("Index", "Store")">Hàng mới về</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Customer Care -->
+                <div class="footer-col">
+                    <h4>Chăm Sóc Khách Hàng</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Chính sách đổi trả trong 7 ngày</a></li>
+                        <li><a href="#">Bảng hướng dẫn chọn size chuẩn</a></li>
+                        <li><a href="#">Chính sách giao hàng hỏa tốc</a></li>
+                        <li><a href="#">Bảo mật thông tin khách hàng</a></li>
+                        <li><a href="#">Câu hỏi thường gặp (FAQ)</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Contact & Showrooms -->
+                <div class="footer-col">
+                    <h4>Liên Hệ Trực Tiếp</h4>
+                    <ul class="footer-links" style="color: #94a3b8;">
+                        <li><i class="fa-solid fa-location-dot" style="color: var(--color-accent); margin-right: 0.5rem;"></i> 828 Sư Vạn Hạnh, Hòa Hưng, Hồ Chí Minh, Việt Nam</li>
+                        <li><i class="fa-solid fa-phone" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Hotline: 02838632052</li>
+                        <li><i class="fa-solid fa-envelope" style="color: var(--color-accent); margin-right: 0.5rem;"></i> contact@fashionhub.vn</li>
+                        <li><i class="fa-solid fa-shield-halved" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Cam kết hàng chính hãng 100%</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery Script -->
+    <script src="~/Scripts/jquery-3.7.0.min.js"></script>
+
+    <!-- Custom Script for UI Interactivity -->
+    <script>
+        // Toggle mobile navigation menu
+        document.getElementById('mobileNavToggle')?.addEventListener('click', function () {
+            var nav = document.getElementById('mainNav');
+            if (nav) {
+                nav.classList.toggle('show');
+            }
+        });
+
+        // Auto dismiss alert messages after 5 seconds
+        setTimeout(function () {
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function (alert) {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(function () {
+                    alert.remove();
+                }, 500);
+            });
+        }, 5000);
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

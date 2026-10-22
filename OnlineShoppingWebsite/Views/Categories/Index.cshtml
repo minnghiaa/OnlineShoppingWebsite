@@ -1,0 +1,59 @@
+﻿@model IEnumerable<OnlineShoppingWebsite.Models.Category>
+
+@{
+    ViewBag.Title = "Quản lý danh mục";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h2 style="font-size: 1.75rem; margin-bottom: 0.25rem;">QUẢN LÝ DANH MỤC THỜI TRANG</h2>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
+            Quản lý các nhóm danh mục sản phẩm của hệ thống Fashion Hub.
+        </p>
+    </div>
+    <div>
+        @Html.ActionLink("Thêm danh mục mới", "Create", null, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
+<div class="cart-table-card" style="padding: 0; overflow-x: auto;">
+    <table class="table-custom">
+        <thead>
+            <tr>
+                <th style="width: 100px;">Mã DM</th>
+                <th>Tên danh mục thời trang</th>
+                <th style="width: 180px;">Số lượng sản phẩm</th>
+                <th style="text-align: right; width: 220px;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var pCount = item.Products != null ? item.Products.Count : 0;
+                <tr>
+                    <td><strong>#@item.CategoryID</strong></td>
+                    <td>
+                        <strong style="color: var(--color-primary); font-size: 1rem;">@item.CategoryName</strong>
+                    </td>
+                    <td>
+                        <span style="background: var(--bg-surface-secondary); padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-weight: 700; color: var(--color-primary);">
+                            @pCount sản phẩm
+                        </span>
+                    </td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <a href="@Url.Action("Edit", new { id = item.CategoryID })" class="btn btn-outline btn-sm" title="Sửa tên danh mục">
+                            <i class="fa-solid fa-pen-to-square"></i> Sửa
+                        </a>
+                        <a href="@Url.Action("Details", new { id = item.CategoryID })" class="btn btn-outline btn-sm" title="Xem chi tiết & danh sách SP">
+                            <i class="fa-solid fa-eye"></i> Chi tiết
+                        </a>
+                        <a href="@Url.Action("Delete", new { id = item.CategoryID })" class="btn btn-outline btn-sm" style="color: var(--color-danger); border-color: #fecaca;" title="Xóa danh mục">
+                            <i class="fa-solid fa-trash"></i> Xóa
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

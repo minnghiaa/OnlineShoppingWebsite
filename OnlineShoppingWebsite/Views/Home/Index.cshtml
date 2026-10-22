@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "Trang Chủ - Fashion Hub";
+}
+
+<!-- HERO BANNER -->
+<section style="background: linear-gradient(135deg, #111827 0%, #1f2937 100%); color: #ffffff; padding: 4rem 2.5rem; border-radius: var(--radius-lg); margin-bottom: 3rem; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: var(--shadow-lg);">
+    <span style="color: var(--color-accent); font-weight: 700; letter-spacing: 3px; font-size: 0.875rem; text-transform: uppercase; margin-bottom: 1rem;">
+        Bộ Sưu Tập Mới 2026
+    </span>
+    <h1 style="color: #ffffff; font-size: 2.75rem; margin-bottom: 1.25rem; font-family: var(--font-heading); max-width: 800px; line-height: 1.2;">
+        Tôn Vinh Phong Cách &amp; Đẳng Cấp Thời Trang Hiện Đại
+    </h1>
+    <p style="color: #cbd5e1; font-size: 1.125rem; max-width: 650px; margin-bottom: 2rem; line-height: 1.7;">
+        Khám phá những mẫu thiết kế mới nhất với chất liệu cao cấp, phom dáng chuẩn mực và bảng màu tinh tế dành riêng cho bạn.
+    </p>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+        <a href="@Url.Action("Index", "Store")" class="btn btn-accent btn-lg" title="Khám phá ngay bộ sưu tập">
+            <i class="fa-solid fa-bag-shopping"></i> Mua Sắm Ngay
+        </a>
+        <a href="@Url.Action("About", "Home")" class="btn btn-outline btn-lg" style="color: #ffffff; border-color: rgba(255,255,255,0.4);">
+            Về Chúng Tôi
+        </a>
+    </div>
+</section>
+
+<!-- HIGHLIGHT FEATURES -->
+<section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+    <div style="background-color: var(--bg-surface); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); display: flex; align-items: flex-start; gap: 1rem; box-shadow: var(--shadow-sm);">
+        <div style="width: 50px; height: 50px; border-radius: var(--radius-md); background-color: var(--color-warning-bg); color: var(--color-accent); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+            <i class="fa-solid fa-truck-fast"></i>
+        </div>
+        <div>
+            <h4 style="font-size: 1.05rem; margin-bottom: 0.35rem;">Giao Hàng Miễn Phí</h4>
+            <p style="color: var(--text-muted); font-size: 0.875rem;">Đơn hàng từ 500.000đ được miễn phí vận chuyển toàn quốc.</p>
+        </div>
+    </div>
+
+    <div style="background-color: var(--bg-surface); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); display: flex; align-items: flex-start; gap: 1rem; box-shadow: var(--shadow-sm);">
+        <div style="width: 50px; height: 50px; border-radius: var(--radius-md); background-color: var(--color-success-bg); color: var(--color-success); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+            <i class="fa-solid fa-rotate-left"></i>
+        </div>
+        <div>
+            <h4 style="font-size: 1.05rem; margin-bottom: 0.35rem;">Đổi Trả 7 Ngày</h4>
+            <p style="color: var(--text-muted); font-size: 0.875rem;">Hỗ trợ đổi size và đổi mẫu dễ dàng trong 7 ngày nếu không vừa ý.</p>
+        </div>
+    </div>
+
+    <div style="background-color: var(--bg-surface); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); display: flex; align-items: flex-start; gap: 1rem; box-shadow: var(--shadow-sm);">
+        <div style="width: 50px; height: 50px; border-radius: var(--radius-md); background-color: var(--color-info-bg); color: var(--color-info); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+            <i class="fa-solid fa-shield-check"></i>
+        </div>
+        <div>
+            <h4 style="font-size: 1.05rem; margin-bottom: 0.35rem;">Chính Hãng 100%</h4>
+            <p style="color: var(--text-muted); font-size: 0.875rem;">Cam kết nguồn gốc xuất xứ và đường may tỉ mỉ chuẩn xuất khẩu.</p>
+        </div>
+    </div>
+</section>
