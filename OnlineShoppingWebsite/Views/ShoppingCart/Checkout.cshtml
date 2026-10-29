@@ -1,0 +1,135 @@
+﻿@model OnlineShoppingWebsite.Models.CheckoutViewModel
+@{
+    ViewBag.Title = "Đặt hàng";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<div class="cart-page-container">
+    <div class="page-header-simple">
+        <h1 class="page-title">Thông Tin Đặt Hàng</h1>
+        <p class="page-subtitle">Vui lòng điền thông tin người nhận để hoàn tất đơn hàng của bạn</p>
+    </div>
+
+    @if (ViewBag.CheckoutTest != null)
+    {
+        <div class="flash-alert flash-alert-success" style="margin-bottom: 20px;">
+            <span class="flash-icon">✓</span>
+            <span>@ViewBag.CheckoutTest</span>
+        </div>
+    }
+
+    <div class="checkout-grid">
+        @* Cột trái: Form thông tin người nhận *@
+        <section class="checkout-form-card">
+            <h3 class="checkout-section-heading">Thông Tin Khách Hàng</h3>
+
+            @using (Html.BeginForm("Checkout", "ShoppingCart", FormMethod.Post, new { id = "checkoutForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger alert-validation" })
+
+                <div class="checkout-field-group">
+                    <label class="checkout-field-label">
+                        @Html.LabelFor(m => m.FullName) <span class="text-danger">*</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.FullName, new { @class = "form-control-modern", placeholder = "Nguyễn Văn A" })
+                    @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="checkout-field-row">
+                    <div class="checkout-field-group">
+                        <label class="checkout-field-label">
+                            @Html.LabelFor(m => m.Phone) <span class="text-danger">*</span>
+                        </label>
+                        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control-modern", placeholder = "0901234567" })
+                        @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="checkout-field-group">
+                        <label class="checkout-field-label">
+                            @Html.LabelFor(m => m.Email) <span class="text-danger">*</span>
+                        </label>
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control-modern", type = "email", placeholder = "email@example.com" })
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="checkout-field-group">
+                    <label class="checkout-field-label">
+                        @Html.LabelFor(m => m.Address) <span class="text-danger">*</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.Address, new { @class = "form-control-modern", placeholder = "Địa chỉ liên hệ" })
+                    @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="checkout-field-group">
+                    <label class="checkout-field-label">
+                        @Html.LabelFor(m => m.ShippingAddress) <span class="text-danger">*</span>
+                    </label>
+                    @Html.TextBoxFor(m => m.ShippingAddress, new { @class = "form-control-modern", placeholder = "Địa chỉ nhận hàng" })
+                    @Html.ValidationMessageFor(m => m.ShippingAddress, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="checkout-payment-box">
+                    <h4 style="margin: 0 0 10px; font-size: 15px; color: var(--text-dark, #0f172a);">Phương thức thanh toán</h4>
+                    <label class="payment-method-radio">
+                        <input type="radio" name="paymentMethod" value="COD" checked disabled />
+                        <span><strong>Thanh toán khi nhận hàng (COD)</strong> - Kiểm tra hàng trước khi thanh toán tiền mặt</span>
+                    </label>
+                </div>
+
+                <div class="checkout-submit-area">
+                    <button type="submit" class="btn-brand btn-block btn-lg" style="cursor: pointer;">
+                        Đặt hàng
+                    </button>
+                    <div style="text-align: center; margin-top: 12px;">
+                        @Html.ActionLink("← Quay lại kiểm tra giỏ hàng", "ShowCart", "ShoppingCart", null, new { @class = "btn-link-subtle" })
+                    </div>
+                </div>
+            }
+        </section>
+
+        @* Cột phải: Tóm tắt đơn hàng *@
+        <aside class="checkout-summary-card">
+            <h3 class="summary-card-title">Đơn Hàng Của Bạn</h3>
+
+            <div class="checkout-items-scroll">
+                @foreach (var item in Model.Cart.Items)
+                {
+                    <div class="checkout-mini-item">
+                        <img src="~/Content/images/@item.ImageUrl" alt="@item.ProductName" class="checkout-thumb" />
+                        <div class="checkout-meta">
+                            <span class="checkout-name">@item.ProductName</span>
+                            <div class="checkout-specs">
+                                <span>Số lượng: <strong>@item.Quantity</strong></span>
+                                <span>×</span>
+                                <span>@item.UnitPrice.ToString("#,##0")&nbsp;đ</span>
+                            </div>
+                        </div>
+                        <div class="checkout-linetotal">
+                            @item.LineTotal.ToString("#,##0")&nbsp;đ
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-row">
+                <span>Tổng số lượng:</span>
+                <strong>@Model.Cart.TotalQuantity() sản phẩm</strong>
+            </div>
+            <div class="summary-row">
+                <span>Phí giao hàng:</span>
+                <strong class="text-success">0 đ (Miễn phí)</strong>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-row summary-grand-total">
+                <span>Tổng cộng:</span>
+                <strong class="total-highlight">@Model.Cart.TotalMoney().ToString("#,##0")&nbsp;đ</strong>
+            </div>
+        </aside>
+    </div>
+</div>

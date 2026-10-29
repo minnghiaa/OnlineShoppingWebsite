@@ -1,0 +1,123 @@
+﻿@model OnlineShoppingWebsite.Models.OrderPro
+@using System.Linq
+@{
+    ViewBag.Title = "Đặt hàng thành công";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<div class="cart-page-container order-success-wrapper">
+    <div class="order-success-banner">
+        <div class="success-icon-badge">🎉</div>
+        <h1 class="success-headline">Đặt Hàng Thành Công!</h1>
+        <p class="success-lead">Cảm ơn bạn đã đặt hàng tại <strong>FASHION HUB</strong>.</p>
+        <p class="order-code-display">Mã đơn hàng của bạn: <span class="order-code-highlight">#@Model.OrderID</span></p>
+    </div>
+
+    <div class="order-info-grid">
+        @* Khối thông tin đơn hàng *@
+        <div class="order-info-card">
+            <h3 class="info-card-header">📋 Thông Tin Đơn Hàng</h3>
+            <ul class="order-info-list">
+                <li>
+                    <span class="info-label">Mã đơn:</span>
+                    <strong class="info-val">#@Model.OrderID</strong>
+                </li>
+                <li>
+                    <span class="info-label">Ngày đặt:</span>
+                    <span class="info-val">@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                </li>
+                <li>
+                    <span class="info-label">Trạng thái:</span>
+                    <span class="order-status-badge status-pending">@Model.Status</span>
+                </li>
+                <li>
+                    <span class="info-label">Tổng số lượng:</span>
+                    <span class="info-val"><strong>@(Model.OrderDetails != null ? Model.OrderDetails.Sum(d => d.Quantity) : 0)</strong> sản phẩm</span>
+                </li>
+                <li class="info-list-total">
+                    <span class="info-label">Tổng tiền:</span>
+                    <strong class="info-val total-highlight">@Model.TotalAmount.ToString("#,##0")&nbsp;đ</strong>
+                </li>
+            </ul>
+        </div>
+
+        @* Khối thông tin giao hàng *@
+        <div class="order-info-card">
+            <h3 class="info-card-header">🚚 Thông Tin Giao Hàng</h3>
+            <ul class="order-info-list">
+                <li>
+                    <span class="info-label">Người nhận:</span>
+                    <strong class="info-val">@Model.RecipientName</strong>
+                </li>
+                <li>
+                    <span class="info-label">Số điện thoại:</span>
+                    <span class="info-val">@Model.ShippingPhone</span>
+                </li>
+                <li>
+                    <span class="info-label">Email:</span>
+                    <span class="info-val">@(Model.Customer != null ? Model.Customer.Email : "N/A")</span>
+                </li>
+                <li>
+                    <span class="info-label">Địa chỉ giao:</span>
+                    <span class="info-val">@Model.ShippingAddress</span>
+                </li>
+                <li>
+                    <span class="info-label">Hình thức:</span>
+                    <span class="info-val">Thanh toán khi nhận hàng (COD)</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    @* Chi tiết sản phẩm trong đơn *@
+    <div class="order-detail-card">
+        <h3 class="info-card-header">Chi Tiết Đơn Hàng</h3>
+        <div class="cart-table-wrap">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Đơn giá</th>
+                        <th style="text-align: center;">Số lượng</th>
+                        <th style="text-align: right;">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.OrderDetails != null)
+                    {
+                        foreach (var detail in Model.OrderDetails)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="cart-product">
+                                        @if (detail.Product != null)
+                                        {
+                                            <img src="~/Content/images/@detail.Product.ImageUrl" alt="@detail.Product.ProductName" />
+                                            <div>
+                                                <strong>@detail.Product.ProductName</strong>
+                                                <small style="display:block; color: #64748b;">Mã SP: #@detail.ProductID</small>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span>Sản phẩm #@detail.ProductID</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>@detail.UnitPrice.ToString("#,##0")&nbsp;đ</td>
+                                <td style="text-align: center;"><strong>@detail.Quantity</strong></td>
+                                <td style="text-align: right;" class="cart-item-total">
+                                    @((detail.UnitPrice * detail.Quantity).ToString("#,##0"))&nbsp;đ
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="order-success-actions" style="margin-top: 30px; text-align: center;">
+        @Html.ActionLink("Tiếp tục mua hàng", "Index", "Store", null, new { @class = "btn-brand btn-lg", style = "display: inline-block; padding: 14px 36px;" })
+    </div>
+</div>

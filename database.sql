@@ -1,4 +1,4 @@
-﻿-- ============================================================================
+-- ============================================================================
 -- ĐỒ ÁN LẬP TRÌNH WEB - ONLINE SHOPPING WEBSITE (CHỦ ĐỀ BÁN QUẦN ÁO THỜI TRANG)
 -- HỆ QUẢN TRỊ CƠ SỞ DỮ LIỆU: SQL SERVER
 -- TÊN DATABASE: OnlineShoppingDB
@@ -52,12 +52,12 @@ GO
 -- Bảng 3: Customer (Thông tin chi tiết của khách hàng)
 CREATE TABLE Customer (
     CustomerID INT IDENTITY(1,1) PRIMARY KEY,
-    UserID INT NOT NULL UNIQUE,
+    UserID INT NULL,
     FullName NVARCHAR(100) NOT NULL,
     Phone NVARCHAR(20) NULL,
     Email NVARCHAR(100) NULL,
     Address NVARCHAR(255) NULL,
-    CONSTRAINT FK_Customer_UserAccount FOREIGN KEY (UserID) REFERENCES UserAccount(UserID) ON DELETE CASCADE
+    CONSTRAINT FK_Customer_UserAccount FOREIGN KEY (UserID) REFERENCES UserAccount(UserID)
 );
 GO
 
@@ -91,11 +91,13 @@ CREATE TABLE OrderPro (
     OrderID INT IDENTITY(1,1) PRIMARY KEY,
     OrderDate DATETIME NOT NULL DEFAULT GETDATE(),
     CustomerID INT NOT NULL,
+    RecipientName NVARCHAR(100) NULL,
+    ShippingPhone NVARCHAR(20) NULL,
     ShippingAddress NVARCHAR(255) NOT NULL,
     TotalAmount DECIMAL(18,2) NOT NULL DEFAULT 0,
     [Status] NVARCHAR(50) NOT NULL DEFAULT N'Pending',
     CONSTRAINT CK_OrderPro_TotalAmount CHECK (TotalAmount >= 0),
-    CONSTRAINT CK_OrderPro_Status CHECK ([Status] IN (N'Pending', N'Confirmed', N'Shipping', N'Completed', N'Cancelled')),
+    CONSTRAINT CK_OrderPro_Status CHECK ([Status] IN (N'Pending', N'Confirmed', N'Shipping', N'Completed', N'Cancelled', N'Chờ xử lý', N'Đã xác nhận', N'Đang giao', N'Hoàn thành', N'Đã hủy')),
     CONSTRAINT FK_OrderPro_Customer FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 GO

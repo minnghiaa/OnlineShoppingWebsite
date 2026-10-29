@@ -1,4 +1,4 @@
-﻿@model OnlineShoppingWebsite.Models.Product
+@model OnlineShoppingWebsite.Models.Product
 
 @{
     ViewBag.Title = Model.ProductName + " - FASHION HUB";
@@ -87,7 +87,7 @@
         @if (Model.StockQuantity > 0)
         {
             <!-- Form chuẩn bị tích hợp CartController ở Giai đoạn 4 -->
-            using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { id = "addToCartForm" }))
+            using (Html.BeginForm("AddToCart", "ShoppingCart", FormMethod.Post, new { id = "addToCartForm" }))
             {
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="productId" value="@Model.ProductID" />

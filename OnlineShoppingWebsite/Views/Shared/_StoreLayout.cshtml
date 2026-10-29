@@ -131,13 +131,8 @@
                     </div>
                 }
 
-                <!-- Cart Button -->
-                <a href="#" class="cart-btn" title="Giỏ hàng (Kích hoạt ở Giai đoạn 4)" aria-label="Giỏ hàng">
-                    <i class="fa-solid fa-bag-shopping"></i>
-                    <span class="cart-badge" id="cartCountBadge">
-                        @(Session["CartCount"] ?? 0)
-                    </span>
-                </a>
+                <!-- Cart Button (Buá»•i 07 - ShoppingCart BagCart) -->
+                @{ Html.RenderAction("BagCart", "ShoppingCart"); }
 
                 <!-- Nút Mũi Tên Xổ Xuống Quản Lý (Sát góc phải kế bên giỏ hàng) -->
                 <div class="admin-quick-menu">
@@ -177,7 +172,7 @@
                     <i class="fa-solid fa-circle-check"></i>
                     <span>@TempData["Success"]</span>
                 </div>
-                <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+                <button type="button" class="alert-close" onclick="closeAlert(this);">&times;</button>
             </div>
         }
         @if (TempData["Error"] != null)
@@ -187,7 +182,7 @@
                     <i class="fa-solid fa-circle-exclamation"></i>
                     <span>@TempData["Error"]</span>
                 </div>
-                <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+                <button type="button" class="alert-close" onclick="closeAlert(this);">&times;</button>
             </div>
         }
         @if (TempData["Warning"] != null)
@@ -197,7 +192,7 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>@TempData["Warning"]</span>
                 </div>
-                <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+                <button type="button" class="alert-close" onclick="closeAlert(this);">&times;</button>
             </div>
         }
         @if (TempData["Info"] != null)
@@ -207,7 +202,7 @@
                     <i class="fa-solid fa-circle-info"></i>
                     <span>@TempData["Info"]</span>
                 </div>
-                <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+                <button type="button" class="alert-close" onclick="closeAlert(this);">&times;</button>
             </div>
         }
 
@@ -306,5 +301,11 @@
     </script>
 
     @RenderSection("scripts", required: false)
+    <script>
+        function closeAlert(btn) {
+            var box = btn ? btn.closest('.alert') : null;
+            if (box) box.remove();
+        }
+    </script>
 </body>
 </html>

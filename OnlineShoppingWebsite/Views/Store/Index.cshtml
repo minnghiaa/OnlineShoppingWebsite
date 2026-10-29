@@ -237,14 +237,19 @@
                                 <!-- NÚT HÀNH ĐỘNG VỚI SẢN PHẨM -->
                                 @if (item.StockQuantity > 0)
                                 {
-                                    <a href="@Url.Action("Details", "Store", new { id = item.ProductID })" class="btn btn-primary btn-sm product-card-btn">
-                                        <i class="fa-solid fa-eye"></i> Xem Chi Tiết
-                                    </a>
+                                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                                        <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.ProductID })" class="btn btn-primary btn-sm product-card-btn" style="flex: 1;" title="ThÃªm vÃ o giá» hÃ ng">
+                                            <i class="fa-solid fa-cart-plus"></i> Mua
+                                        </a>
+                                        <a href="@Url.Action("Details", "Store", new { id = item.ProductID })" class="btn btn-outline btn-sm" style="padding: 6px 10px;" title="Xem chi tiáº¿t">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                    </div>
                                 }
                                 else
                                 {
-                                    <button type="button" class="btn btn-disabled btn-sm product-card-btn" disabled title="Sản phẩm tạm thời hết hàng">
-                                        <i class="fa-solid fa-ban"></i> Hết Hàng
+                                    <button type="button" class="btn btn-disabled btn-sm product-card-btn" disabled title="Sáº£n pháº©m táº¡m thá»i háº¿t hÃ ng" style="margin-top: 10px;">
+                                        <i class="fa-solid fa-ban"></i> Háº¿t hÃ ng
                                     </button>
                                 }
                             </div>
