@@ -1,0 +1,82 @@
+@* View nhận dữ liệu SignUpViewModel *@
+@model OnlineShoppingWebsite.Models.SignUpViewModel
+
+@{
+    ViewBag.Title = "Đăng ký";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<div class="auth-page">
+    <div class="auth-card">
+        <h2>Đăng ký tài khoản</h2>
+        <p class="auth-subtitle">
+            Tạo tài khoản Customer để đăng nhập mua sắm thời trang tại FASHION HUB.
+        </p>
+
+        @* Thông báo lỗi chung do Controller thêm vào ModelState *@
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @using (Html.BeginForm("SignUp", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <!-- Tên đăng nhập -->
+            <div class="auth-field">
+                @Html.LabelFor(m => m.UserName)
+                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control-modern", placeholder = "Nhập tên đăng nhập" })
+                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Mật khẩu -->
+            <div class="auth-field">
+                @Html.LabelFor(m => m.Password)
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control-modern", placeholder = "Ít nhất 6 ký tự" })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Nhập lại mật khẩu -->
+            <div class="auth-field">
+                @Html.LabelFor(m => m.ConfirmPassword)
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control-modern", placeholder = "Nhập lại mật khẩu" })
+                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Họ tên -->
+            <div class="auth-field">
+                @Html.LabelFor(m => m.FullName)
+                @Html.TextBoxFor(m => m.FullName, new { @class = "form-control-modern", placeholder = "Họ và tên của bạn" })
+                @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Số điện thoại -->
+            <div class="auth-field">
+                @Html.LabelFor(m => m.Phone)
+                @Html.TextBoxFor(m => m.Phone, new { @class = "form-control-modern", placeholder = "0901234567" })
+                @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Email -->
+            <div class="auth-field">
+                @Html.LabelFor(m => m.Email)
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control-modern", placeholder = "example@gmail.com" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Địa chỉ -->
+            <div class="auth-field">
+                @Html.LabelFor(m => m.Address)
+                @Html.TextBoxFor(m => m.Address, new { @class = "form-control-modern", placeholder = "Địa chỉ nhận hàng (Số nhà, đường, phường, quận/huyện, tỉnh/TP)" })
+                @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+            </div>
+
+            <button type="submit" class="btn-brand auth-submit">
+                Đăng ký tài khoản
+            </button>
+        }
+
+        <p class="auth-bottom-link">
+            Đã có tài khoản?
+            <a href="@Url.Action("Login", "Account")">Đăng nhập ngay</a>
+        </p>
+    </div>
+</div>

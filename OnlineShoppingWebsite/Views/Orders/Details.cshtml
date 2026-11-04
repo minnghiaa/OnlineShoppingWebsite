@@ -1,0 +1,268 @@
+@model OnlineShoppingWebsite.Models.OrderPro
+@using System.Linq
+@functions {
+    public static string GetVietnameseStatus(string status)
+    {
+        if (string.IsNullOrWhiteSpace(status)) return "Chờ xử lý";
+        status = status.Trim();
+        if (status.Equals("Pending", StringComparison.OrdinalIgnoreCase) || status.Contains("?") || status.Equals("Chờ xử lý", StringComparison.OrdinalIgnoreCase))
+            return "Chờ xử lý";
+        if (status.Equals("Confirmed", StringComparison.OrdinalIgnoreCase) || status.Equals("Đã xác nhận", StringComparison.OrdinalIgnoreCase))
+            return "Đã xác nhận";
+        if (status.Equals("Shipping", StringComparison.OrdinalIgnoreCase) || status.Equals("Đang giao", StringComparison.OrdinalIgnoreCase))
+            return "Đang giao";
+        if (status.Equals("Completed", StringComparison.OrdinalIgnoreCase) || status.Equals("Hoàn thành", StringComparison.OrdinalIgnoreCase))
+            return "Hoàn thành";
+        if (status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase) || status.Equals("Đã hủy", StringComparison.OrdinalIgnoreCase))
+            return "Đã hủy";
+        return status;
+    }
+}
+@{
+    ViewBag.Title = "Chi tiết đơn hàng #" + Model.OrderID;
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+    string vnStatus = GetVietnameseStatus(Model.Status);
+}
+
+<div class="admin-orders-container">
+    <!-- Header Chi Tiết Đơn Hàng -->
+    <div class="admin-header-section">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                <a href="@Url.Action("Index", "Orders")" class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </a>
+                <span class="admin-badge"><i class="fa-solid fa-receipt"></i> CHI TIẾT ĐƠN HÀNG</span>
+            </div>
+            <h1 class="admin-headline">Đơn Hàng #@Model.OrderID</h1>
+            <p class="admin-lead">Đặt vào ngày @Model.OrderDate.ToString("dd/MM/yyyy") lúc @Model.OrderDate.ToString("HH:mm:ss")</p>
+        </div>
+        <div class="admin-header-actions">
+            <button type="button" class="btn btn-outline" onclick="window.print();">
+                <i class="fa-solid fa-print"></i> In Hóa Đơn
+            </button>
+            <a href="@Url.Action("Index", "Orders")" class="btn btn-primary">
+                <i class="fa-solid fa-list"></i> Danh Sách Đơn
+            </a>
+        </div>
+    </div>
+
+    <!-- Hàng 2 Card: Thông tin Đơn hàng & Thông tin Giao nhận -->
+    <div class="order-detail-grid">
+        <!-- 1. Thông Tin Đơn Hàng & Cập Nhật Trạng Thái -->
+        <div class="order-summary-card">
+            <h3 class="card-subtitle"><i class="fa-solid fa-file-invoice-dollar" style="color: var(--color-accent);"></i> Thông Tin Đơn Hàng</h3>
+            
+            <ul class="order-detail-info-list">
+                <li>
+                    <span class="info-label">Mã đơn:</span>
+                    <strong class="info-val">#@Model.OrderID</strong>
+                </li>
+                <li>
+                    <span class="info-label">Ngày đặt:</span>
+                    <span class="info-val">@Model.OrderDate.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                </li>
+                <li>
+                    <span class="info-label">Trạng thái hiện tại:</span>
+                    <span class="info-val">
+                        @if (vnStatus == "Hoàn thành")
+                        {
+                            <span class="badge-status badge-success">Hoàn thành</span>
+                        }
+                        else if (vnStatus == "Đã hủy")
+                        {
+                            <span class="badge-status badge-danger">Đã hủy</span>
+                        }
+                        else if (vnStatus == "Đang giao")
+                        {
+                            <span class="badge-status badge-info">Đang giao</span>
+                        }
+                        else if (vnStatus == "Đã xác nhận")
+                        {
+                            <span class="badge-status badge-info">Đã xác nhận</span>
+                        }
+                        else
+                        {
+                            <span class="badge-status badge-warning">Chờ xử lý</span>
+                        }
+                    </span>
+                </li>
+                <li>
+                    <span class="info-label">Phương thức:</span>
+                    <span class="info-val">Thanh toán khi nhận hàng (COD)</span>
+                </li>
+                <li style="border-top: 1px dashed var(--border-subtle); padding-top: 0.75rem; margin-top: 0.5rem;">
+                    <span class="info-label" style="font-weight: 700; color: var(--color-primary);">Tổng thanh toán:</span>
+                    <strong class="info-val order-total-highlight" style="font-size: 1.25rem;">
+                        @string.Format("{0:N0} đ", Model.TotalAmount)
+                    </strong>
+                </li>
+            </ul>
+
+            <!-- Form Cập Nhật Trạng Thái Ngay Tại Trang Chi Tiết -->
+            <div class="status-change-box">
+                <h4 style="font-size: 0.9375rem; margin-bottom: 0.5rem; color: var(--text-primary);">
+                    <i class="fa-solid fa-pen-to-square"></i> Cập Nhật Trạng Thái Đơn:
+                </h4>
+                @using (Html.BeginForm("UpdateStatus", "Orders", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.OrderID" />
+                    <input type="hidden" name="returnUrl" value="@Request.RawUrl" />
+                    
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <select name="status" class="form-control-modern" style="flex: 1; padding: 8px 12px; font-weight: 600;">
+                            <option value="Chờ xử lý" @(vnStatus == "Chờ xử lý" ? "selected" : "")>⏳ Chờ xử lý</option>
+                            <option value="Đã xác nhận" @(vnStatus == "Đã xác nhận" ? "selected" : "")>📋 Đã xác nhận</option>
+                            <option value="Đang giao" @(vnStatus == "Đang giao" ? "selected" : "")>🚚 Đang giao</option>
+                            <option value="Hoàn thành" @(vnStatus == "Hoàn thành" ? "selected" : "")>✅ Hoàn thành</option>
+                            <option value="Đã hủy" @(vnStatus == "Đã hủy" ? "selected" : "")>❌ Đã hủy</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary btn-sm" style="white-space: nowrap;">
+                            <i class="fa-solid fa-floppy-disk"></i> Lưu Thay Đổi
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- 2. Thông Tin Khách Hàng & Giao Hàng (Snapshot) -->
+        <div class="order-summary-card">
+            <h3 class="card-subtitle"><i class="fa-solid fa-truck-fast" style="color: var(--color-accent);"></i> Thông Tin Giao Hàng &amp; Khách Hàng</h3>
+
+            <ul class="order-detail-info-list">
+                <li>
+                    <span class="info-label">Người nhận hàng:</span>
+                    <strong class="info-val">@Model.RecipientName</strong>
+                </li>
+                <li>
+                    <span class="info-label">Số điện thoại nhận:</span>
+                    <strong class="info-val" style="color: var(--color-primary);">@Model.ShippingPhone</strong>
+                </li>
+                <li>
+                    <span class="info-label">Địa chỉ nhận hàng:</span>
+                    <span class="info-val">@Model.ShippingAddress</span>
+                </li>
+                <li>
+                    <span class="info-label">Email khách hàng:</span>
+                    <span class="info-val">@(Model.Customer != null && !string.IsNullOrEmpty(Model.Customer.Email) ? Model.Customer.Email : "Chưa cung cấp")</span>
+                </li>
+                <li>
+                    <span class="info-label">Loại tài khoản:</span>
+                    <span class="info-val">
+                        @if (Model.Customer != null && Model.Customer.UserID != null)
+                        {
+                            <span class="badge-customer-type member">
+                                <i class="fa-solid fa-user-check"></i> Khách hàng thành viên (Mã KH: #@Model.Customer.CustomerID)
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge-customer-type guest">
+                                <i class="fa-regular fa-user"></i> Khách vãng lai (Guest Checkout)
+                            </span>
+                        }
+                    </span>
+                </li>
+                @if (Model.Customer != null && !string.IsNullOrEmpty(Model.Customer.Address) && Model.Customer.Address != Model.ShippingAddress)
+                {
+                    <li>
+                        <span class="info-label">Địa chỉ hồ sơ KH:</span>
+                        <span class="info-val text-muted">@Model.Customer.Address</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <!-- 3. Danh Sách Sản Phẩm Đặt Mua (Order Details Table) -->
+    <div class="admin-table-card" style="margin-top: 2rem;">
+        <div class="admin-card-header-flex" style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-subtle);">
+            <div>
+                <h3 style="margin-bottom: 4px;"><i class="fa-solid fa-basket-shopping" style="color: var(--color-accent); margin-right: 6px;"></i> Danh Sách Sản Phẩm Đặt Mua</h3>
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0;">
+                    Tổng cộng: <strong>@(Model.OrderDetails != null ? Model.OrderDetails.Sum(d => d.Quantity) : 0)</strong> sản phẩm
+                </p>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Hình ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th style="width: 140px; text-align: right;">Đơn giá</th>
+                        <th style="width: 110px; text-align: center;">Số lượng</th>
+                        <th style="width: 160px; text-align: right;">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+                    {
+                        foreach (var detail in Model.OrderDetails)
+                        {
+                            decimal lineTotal = detail.UnitPrice * detail.Quantity;
+                            <tr>
+                                <td>
+                                    @if (detail.Product != null && !string.IsNullOrEmpty(detail.Product.ImageUrl))
+                                    {
+                                        <img src="@Url.Content("~/Content/images/" + detail.Product.ImageUrl)" alt="@detail.Product.ProductName" style="width: 58px; height: 70px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);" onerror="this.src='https://placehold.co/100x120/f1f5f9/334155?text=SP';" />
+                                    }
+                                    else
+                                    {
+                                        <div style="width: 58px; height: 70px; background: var(--bg-surface-secondary); display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); color: var(--text-muted);">
+                                            <i class="fa-solid fa-image"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <strong>@(detail.Product != null ? detail.Product.ProductName : "Sản phẩm #" + detail.ProductID)</strong>
+                                    <div style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 2px;">
+                                        Mã SP: #@detail.ProductID
+                                        @if (detail.Product != null && detail.Product.Category != null)
+                                        {
+                                            <span>&bull; Danh mục: @detail.Product.Category.CategoryName</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td style="text-align: right; font-weight: 500;">
+                                    @string.Format("{0:N0} đ", detail.UnitPrice)
+                                </td>
+                                <td style="text-align: center;">
+                                    <span class="qty-badge">@detail.Quantity</span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <strong style="color: var(--color-primary); font-size: 1rem;">
+                                        @string.Format("{0:N0} đ", lineTotal)
+                                    </strong>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                Không có chi tiết sản phẩm cho đơn hàng này.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr style="background: var(--bg-surface-secondary); font-weight: 700;">
+                        <td colspan="3" style="text-align: right; padding: 1rem 1.5rem; font-size: 1rem;">
+                            Tổng cộng tiền hàng:
+                        </td>
+                        <td style="text-align: center; padding: 1rem 1.5rem; font-size: 1rem;">
+                            @(Model.OrderDetails != null ? Model.OrderDetails.Sum(d => d.Quantity) : 0)
+                        </td>
+                        <td style="text-align: right; padding: 1rem 1.5rem; font-size: 1.125rem; color: var(--color-primary);">
+                            @string.Format("{0:N0} đ", Model.TotalAmount)
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

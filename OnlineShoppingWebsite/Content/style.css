@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    ONLINE SHOPPING WEBSITE - FASHION STORE DESIGN SYSTEM (CSS3 PURE)
    Kiến trúc: CSS Variables, Flexbox, CSS Grid, Responsive 992px & 640px
    Tác giả: Nhóm Đồ Án Lập Trình Web ASP.NET MVC 5
@@ -200,7 +200,8 @@ button, input, select, textarea {
 .brand-logo {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
     line-height: 1;
 }
 
@@ -216,6 +217,9 @@ button, input, select, textarea {
 .brand-logo .logo-sub {
     font-size: 0.6875rem;
     letter-spacing: 3px;
+    text-indent: 3px;
+    text-align: center;
+    width: 100%;
     color: var(--color-accent);
     text-transform: uppercase;
     font-weight: 600;
@@ -361,7 +365,7 @@ button, input, select, textarea {
     z-index: 1050;
 }
 
-.user-menu:hover .user-dropdown {
+.user-menu.open .user-dropdown {
     display: block;
 }
 
@@ -421,6 +425,38 @@ button, input, select, textarea {
     align-items: center;
     justify-content: center;
     border: 2px solid var(--bg-surface);
+}
+
+/* Nút Quản Trị Hệ Thống (Nằm ở góc phải kế bên nút giỏ hàng) */
+.admin-top-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.5rem 0.95rem;
+    background-color: rgba(194, 153, 88, 0.12);
+    color: var(--color-accent);
+    border: 1px solid rgba(194, 153, 88, 0.35);
+    border-radius: var(--radius-full);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: var(--transition-fast);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.admin-top-btn:hover {
+    background-color: var(--color-accent);
+    color: #ffffff;
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(194, 153, 88, 0.25);
+}
+
+.admin-top-btn.active {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border-color: var(--color-primary);
 }
 
 /* Quick Admin Dropdown (Nút xổ xuống góc phải cạnh giỏ hàng) */
@@ -1440,7 +1476,8 @@ button, input, select, textarea {
         width: 100%;
         background-color: var(--bg-surface);
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
+    text-align: center;
         padding: 1.5rem;
         gap: 1rem;
         border-bottom: 1px solid var(--border-subtle);
@@ -1951,7 +1988,8 @@ button, input, select, textarea {
 
 .payment-method-radio {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
     gap: 0.75rem;
     cursor: pointer;
     font-size: 0.875rem;
@@ -2160,4 +2198,642 @@ button, input, select, textarea {
         flex-direction: column;
         gap: 0.75rem;
     }
+}
+/* =========================================================
+                SIGN UP / LOGIN
+   ========================================================= */
+
+
+/* ==================== KHUNG BAO TOÀN TRANG AUTH ==================== */
+
+.auth-page {
+    /* Dùng Flexbox để dễ căn khối form đăng ký/đăng nhập */
+    display: flex;
+    /* Căn card nằm giữa theo chiều ngang */
+    justify-content: center;
+    /* Tạo khoảng cách phía trên và dưới trang */
+    padding: 28px 0;
+}
+
+
+/* ==================== CARD CHỨA FORM ==================== */
+
+.auth-card {
+    /* Card có thể chiếm toàn bộ chiều rộng vùng chứa */
+    width: 100%;
+    /* Nhưng không rộng quá 520px */
+    max-width: 520px;
+    /* Khoảng cách từ nội dung tới viền card */
+    padding: 24px;
+    /* Nền trắng */
+    background: #ffffff;
+    /* Viền xám nhạt */
+    border: 1px solid #e2e8f0;
+    /* Bo tròn 4 góc */
+    border-radius: 14px;
+}
+
+
+    /* ==================== TIÊU ĐỀ TRONG CARD ==================== */
+
+    .auth-card h2 {
+        /* Bỏ khoảng cách mặc định phía trên của thẻ h2 */
+        margin-top: 0;
+    }
+
+
+/* ==================== DÒNG MÔ TẢ DƯỚI TIÊU ĐỀ ==================== */
+
+.auth-subtitle {
+    /* Tạo khoảng cách với phần form phía dưới */
+    margin-bottom: 20px;
+    /* Màu chữ xám để phân biệt với tiêu đề chính */
+    color: #64748b;
+}
+
+
+/* ==================== MỖI Ô NHẬP DỮ LIỆU ==================== */
+
+.auth-field {
+    /* Tạo khoảng cách giữa các field:
+       Username, Password, Email... */
+    margin-bottom: 14px;
+}
+
+
+    /* ==================== LABEL CỦA INPUT ==================== */
+
+    .auth-field label {
+        /* Mỗi label nằm trên một dòng riêng */
+        display: block;
+        /* Tạo khoảng cách giữa label và ô input */
+        margin-bottom: 6px;
+        /* Làm chữ label đậm hơn */
+        font-weight: 600;
+    }
+
+
+    /* ==================== Ô INPUT ==================== */
+
+    .auth-field .form-control-modern {
+        /* Input chiếm toàn bộ chiều rộng của card */
+        width: 100%;
+        /*
+       box-sizing: border-box
+       giúp width: 100% đã bao gồm:
+       - padding
+       - border
+
+       Nhờ vậy input không bị rộng vượt ra ngoài card.
+    */
+        box-sizing: border-box;
+        /* Khoảng cách chữ bên trong input */
+        padding: 10px 12px;
+        /* Viền xám nhạt */
+        border: 1px solid #cbd5e1;
+        /* Bo tròn góc input */
+        border-radius: 9px;
+    }
+
+
+        /* ==================== KHI CLICK VÀO INPUT ==================== */
+
+        .auth-field .form-control-modern:focus {
+            /*
+       Bỏ đường viền focus mặc định
+       của trình duyệt.
+    */
+            outline: none;
+            /*
+       Khi người dùng đang nhập,
+       đổi màu border sang xanh
+       để biết input đang được chọn.
+    */
+            border-color: #2563eb;
+        }
+
+
+/* ==================== NÚT SUBMIT ==================== */
+
+.auth-submit {
+    /* Nút Đăng ký / Đăng nhập rộng bằng card */
+    width: 100%;
+    /* Tạo khoảng cách với field phía trên */
+    margin-top: 6px;
+}
+
+
+/* ==================== LINK PHÍA DƯỚI FORM ==================== */
+
+.auth-bottom-link {
+    /*
+       Tạo khoảng cách với nút submit.
+       Ví dụ:
+       "Chưa có tài khoản? Đăng ký"
+    */
+    margin-top: 16px;
+    /* Căn nội dung ra giữa */
+    text-align: center;
+}
+
+
+/* ==================== THÔNG BÁO VALIDATION ==================== */
+
+.text-danger {
+    /* Hiển thị thông báo lỗi bằng màu đỏ */
+    color: #dc2626;
+    /* Cho chữ lỗi nhỏ hơn nội dung chính */
+    font-size: 13px;
+}
+
+
+/* ==========================================================================
+   B08 - QUẢN TRỊ VIÊN & QUẢN LÝ ĐƠN HÀNG (DESIGN SYSTEM POLISH)
+   Đồng nhất toàn bộ phông chữ 'Be Vietnam Pro', màu sắc Luxury Fashion Hub
+   ========================================================================== */
+
+/* Đồng nhất phông chữ cho toàn bộ form control, nút bấm, ô chọn */
+input, button, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+/* 1. KHUNG BAO VÀ TIÊU ĐỀ ADMIN */
+.admin-dashboard-container,
+.admin-orders-container {
+    padding: 2rem 0;
+}
+
+.admin-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-accent, #c29958);
+    background: rgba(194, 153, 88, 0.12);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm, 4px);
+    margin-bottom: 0.5rem;
+}
+
+.admin-headline {
+    font-size: 2rem;
+    color: var(--color-primary, #111827);
+    margin-bottom: 0.25rem;
+}
+
+.admin-lead {
+    color: var(--text-secondary, #475569);
+    font-size: 0.9375rem;
+}
+
+.admin-header-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* 2. HÀNG THỐNG KÊ (METRICS / STATS CARDS) */
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+}
+
+.stat-card {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    border-radius: var(--radius-lg, 14px);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.stat-icon-blue { background: #eff6ff; color: #2563eb; }
+.stat-icon-purple { background: #faf5ff; color: #9333ea; }
+.stat-icon-amber { background: #fffbeb; color: #d97706; }
+.stat-icon-emerald { background: #f0fdf4; color: #16a34a; }
+
+.stat-info { flex: 1; }
+.stat-label { font-size: 0.8125rem; color: var(--text-muted); display: block; margin-bottom: 4px; }
+.stat-value { font-size: 1.625rem; font-weight: 700; color: var(--color-primary); line-height: 1.1; margin-bottom: 4px; }
+.stat-meta { font-size: 0.75rem; color: var(--text-muted); }
+.text-amber { color: #d97706 !important; }
+.text-emerald { color: #16a34a !important; }
+
+/* 3. 3 CARD QUẢN LÝ CHÍNH THEO BÀI HỌC B08 (SẢN PHẨM / DANH MỤC / ĐƠN HÀNG) */
+.admin-section-title {
+    font-size: 1.25rem;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-primary);
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+@media (max-width: 860px) {
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.admin-card {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.75rem;
+    background: #ffffff;
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    border-radius: var(--radius-lg, 14px);
+    text-decoration: none;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--color-primary);
+    transition: background 0.2s ease;
+}
+
+.admin-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.admin-card:hover::before {
+    background: var(--color-accent);
+}
+
+.admin-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: var(--bg-surface-secondary);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.admin-card:hover .admin-card-icon {
+    background: var(--color-accent);
+    color: #ffffff;
+}
+
+.admin-card-body h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.35rem;
+    color: var(--color-primary);
+}
+
+.admin-card-body p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+}
+
+.admin-card-link {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.admin-recent-orders-card {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    margin-top: 1rem;
+}
+
+.admin-card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* 4. QUẢN LÝ ĐƠN HÀNG - TABS & BỘ LỌC */
+.order-status-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.status-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--radius-full, 9999px);
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.status-tab:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.status-tab.active {
+    background: var(--color-primary);
+    color: #ffffff;
+    border-color: var(--color-primary);
+}
+
+.tab-count {
+    font-size: 0.75rem;
+    padding: 2px 7px;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.status-tab.active .tab-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.order-filter-bar {
+    margin-bottom: 1.5rem;
+}
+
+.order-search-form {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-input-group {
+    position: relative;
+    flex: 1;
+    min-width: 280px;
+}
+
+.search-input-group .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.search-input-group .form-control-modern {
+    padding-left: 36px;
+}
+
+/* 5. BẢNG DỮ LIỆU ĐƠN HÀNG VÀ TRẠNG THÁI */
+.admin-table-card {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.table-modern {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9375rem;
+}
+
+.table-modern th {
+    background: var(--bg-surface-secondary);
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    white-space: nowrap;
+}
+
+.table-modern td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: middle;
+}
+
+.table-modern tr:hover td {
+    background: #fdfdfd;
+}
+
+.order-id-badge {
+    font-weight: 700;
+    color: var(--color-primary);
+    background: var(--bg-surface-secondary);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+}
+
+.badge-customer-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.badge-customer-type.member {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.badge-customer-type.guest {
+    background: #f8fafc;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+.badge-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-status.badge-warning { background: #fef3c7; color: #b45309; }
+.badge-status.badge-info { background: #e0e7ff; color: #4338ca; }
+.badge-status.badge-success { background: #dcfce7; color: #15803d; }
+.badge-status.badge-danger { background: #fee2e2; color: #b91c1c; }
+
+.status-select-wrap {
+    display: inline-block;
+}
+
+.status-select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-subtle);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    outline: none;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease;
+}
+
+.status-select:focus {
+    border-color: var(--color-primary);
+}
+
+.status-opt-pending { border-color: #f59e0b; color: #b45309; background: #fffbeb; }
+.status-opt-confirmed { border-color: #3b82f6; color: #1d4ed8; background: #eff6ff; }
+.status-opt-shipping { border-color: #6366f1; color: #4338ca; background: #e0e7ff; }
+.status-opt-completed { border-color: #10b981; color: #047857; background: #ecfdf5; }
+.status-opt-cancelled { border-color: #ef4444; color: #b91c1c; background: #fef2f2; }
+
+.order-total-highlight {
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+/* 6. CHI TIẾT ĐƠN HÀNG (ORDER DETAILS) */
+.order-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 860px) {
+    .order-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.order-summary-card {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.card-subtitle {
+    font-size: 1.125rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.order-detail-info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.order-detail-info-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 0.9375rem;
+}
+
+.status-change-box {
+    margin-top: 1.25rem;
+    padding: 1rem;
+    background: var(--bg-surface-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+}
+
+.qty-badge {
+    display: inline-block;
+    min-width: 28px;
+    padding: 2px 8px;
+    background: var(--bg-surface-secondary);
+    border-radius: 9999px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.admin-empty-card {
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+    background: #ffffff;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+}
+
+.admin-empty-card .empty-icon {
+    font-size: 3rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
 }

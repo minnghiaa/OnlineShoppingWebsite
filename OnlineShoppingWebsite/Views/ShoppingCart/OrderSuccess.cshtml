@@ -1,4 +1,4 @@
-﻿@model OnlineShoppingWebsite.Models.OrderPro
+@model OnlineShoppingWebsite.Models.OrderPro
 @using System.Linq
 @{
     ViewBag.Title = "Đặt hàng thành công";
@@ -28,7 +28,7 @@
                 </li>
                 <li>
                     <span class="info-label">Trạng thái:</span>
-                    <span class="order-status-badge status-pending">@Model.Status</span>
+                    <span class="order-status-badge status-pending">@(Model.Status == "Pending" ? "Chờ xử lý" : Model.Status)</span>
                 </li>
                 <li>
                     <span class="info-label">Tổng số lượng:</span>
@@ -92,7 +92,7 @@
                                     <div class="cart-product">
                                         @if (detail.Product != null)
                                         {
-                                            <img src="~/Content/images/@detail.Product.ImageUrl" alt="@detail.Product.ProductName" />
+                                            <img src="@Url.Content("~/Content/images/" + detail.Product.ImageUrl)" alt="@detail.Product.ProductName" />
                                             <div>
                                                 <strong>@detail.Product.ProductName</strong>
                                                 <small style="display:block; color: #64748b;">Mã SP: #@detail.ProductID</small>

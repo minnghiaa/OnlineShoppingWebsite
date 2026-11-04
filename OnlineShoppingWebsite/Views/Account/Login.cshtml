@@ -1,0 +1,57 @@
+@model OnlineShoppingWebsite.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Đăng nhập";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<div class="auth-page">
+    <div class="auth-card">
+        <h2>Đăng nhập</h2>
+        <p class="auth-subtitle">
+            Đăng nhập bằng tài khoản thành viên để mua sắm và quản lý đơn hàng.
+        </p>
+
+        @* Thông báo sau khi Sign Up thành công *@
+        @if (TempData["SignUpSuccess"] != null)
+        {
+            <div class="alert alert-success" style="margin-bottom: 1.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>@TempData["SignUpSuccess"]</span>
+                </div>
+            </div>
+        }
+
+        @* Hiển thị lỗi chung từ ModelState *@
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <!-- Tên đăng nhập -->
+            <div class="auth-field">
+                @Html.LabelFor(m => m.UserName)
+                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control-modern", placeholder = "Tên đăng nhập" })
+                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Mật khẩu -->
+            <div class="auth-field">
+                @Html.LabelFor(m => m.Password)
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control-modern", placeholder = "Mật khẩu" })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+
+            <button type="submit" class="btn-brand auth-submit">
+                Đăng nhập
+            </button>
+        }
+
+        <p class="auth-bottom-link">
+            Chưa có tài khoản?
+            <a href="@Url.Action("SignUp", "Account")">Đăng ký ngay</a>
+        </p>
+    </div>
+</div>

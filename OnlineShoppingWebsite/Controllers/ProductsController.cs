@@ -1,14 +1,17 @@
-﻿using System;
+using System;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using OnlineShoppingWebsite.Filters;
 using OnlineShoppingWebsite.Models;
 
 namespace OnlineShoppingWebsite.Controllers
 {
+    // Bổ sung phân quyền Admin cho các chức năng quản trị sản phẩm (B08 - Bài 1)
+    [AdminAuthorize]
     public class ProductsController : Controller
     {
         private OnlineShoppingEntities db = new OnlineShoppingEntities();
@@ -20,7 +23,8 @@ namespace OnlineShoppingWebsite.Controllers
             return View(products);
         }
 
-        // GET: Products/Details/5 (Xem chi tiết sản phẩm)
+        // GET: Products/Details/5 (Xem chi tiết sản phẩm - cho phép cả Guest và Customer)
+        [AllowAnonymous]
         public ActionResult Details(int? id)
         {
             if (id == null)

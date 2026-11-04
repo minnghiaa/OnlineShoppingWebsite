@@ -1,4 +1,4 @@
-﻿@model OnlineShoppingWebsite.Models.CheckoutViewModel
+@model OnlineShoppingWebsite.Models.CheckoutViewModel
 @{
     ViewBag.Title = "Đặt hàng";
     Layout = "~/Views/Shared/_StoreLayout.cshtml";
@@ -97,7 +97,7 @@
                 @foreach (var item in Model.Cart.Items)
                 {
                     <div class="checkout-mini-item">
-                        <img src="~/Content/images/@item.ImageUrl" alt="@item.ProductName" class="checkout-thumb" />
+                        <img src="@Url.Content("~/Content/images/" + item.ImageUrl)" alt="@item.ProductName" class="checkout-thumb" />
                         <div class="checkout-meta">
                             <span class="checkout-name">@item.ProductName</span>
                             <div class="checkout-specs">

@@ -148,7 +148,8 @@ namespace OnlineShoppingWebsite.Controllers
         }
 
         // =========================================================
-        // CHỨC NĂNG 5 & 6: GUEST CHECKOUT (MỞ FORM NHẬP THÔNG TIN)
+        // CHỨC NĂNG 5 & 7: CHECKOUT (MỞ FORM NHẬP THÔNG TIN)
+        // Hỗ trợ cả Khách vãng lai và Thành viên đã đăng nhập (B08)
         // =========================================================
         public ActionResult Checkout()
         {
@@ -165,11 +166,27 @@ namespace OnlineShoppingWebsite.Controllers
                 Cart = cart
             };
 
+            // NẾU CUSTOMER ĐÃ LOGIN -> ĐIỀN SẴN THÔNG TIN HỒ SƠ (B08 - MỤC 8.1)
+            if (Session["CustomerID"] != null)
+            {
+                int customerId = (int)Session["CustomerID"];
+                var customer = db.Customers.Find(customerId);
+                if (customer != null)
+                {
+                    model.FullName = customer.FullName;
+                    model.Phone = customer.Phone;
+                    model.Email = customer.Email;
+                    model.Address = customer.Address;
+                    // Mặc định địa chỉ nhận hàng theo địa chỉ hồ sơ
+                    model.ShippingAddress = customer.Address;
+                }
+            }
+
             return View(model);
         }
 
         // =========================================================
-        // CHỨC NĂNG 6: GUEST CHECKOUT (NHẬN DỮ LIỆU VÀ LƯU ĐƠN HÀNG)
+        // CHỨC NĂNG 6 & 7: CHECKOUT (NHẬN DỮ LIỆU VÀ LƯU ĐƠN HÀNG)
         // =========================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -210,17 +227,36 @@ namespace OnlineShoppingWebsite.Controllers
             {
                 try
                 {
-                    // 1. TẠO CUSTOMER MỚI CHO KHÁCH VÃNG LAI (UserID = NULL)
-                    var customer = new Customer
+                    // =====================================================
+                    // 1. XÁC ĐỊNH CUSTOMER CỦA ĐƠN HÀNG (B08 - MỤC 8.2)
+                    // =====================================================
+                    Customer customer = null;
+
+                    // TRƯỜNG HỢP 1: CUSTOMER ĐÃ LOGIN
+                    if (Session["CustomerID"] != null)
                     {
-                        UserID = null,
-                        FullName = model.FullName.Trim(),
-                        Phone = model.Phone.Trim(),
-                        Email = model.Email.Trim(),
-                        Address = model.Address.Trim()
-                    };
-                    db.Customers.Add(customer);
-                    db.SaveChanges();
+                        int customerId = (int)Session["CustomerID"];
+                        customer = db.Customers.Find(customerId);
+                        if (customer == null)
+                        {
+                            ModelState.AddModelError("", "Không tìm thấy hồ sơ khách hàng.");
+                            return View(model);
+                        }
+                    }
+                    // TRƯỜNG HỢP 2: GUEST CHECKOUT
+                    else
+                    {
+                        customer = new Customer
+                        {
+                            UserID = null,
+                            FullName = model.FullName.Trim(),
+                            Phone = model.Phone != null ? model.Phone.Trim() : null,
+                            Email = model.Email != null ? model.Email.Trim() : null,
+                            Address = model.Address != null ? model.Address.Trim() : null
+                        };
+                        db.Customers.Add(customer);
+                        db.SaveChanges();
+                    }
 
                     // 2. TẠO ORDERPRO
                     var order = new OrderPro
@@ -228,7 +264,7 @@ namespace OnlineShoppingWebsite.Controllers
                         OrderDate = DateTime.Now,
                         CustomerID = customer.CustomerID,
                         RecipientName = model.FullName.Trim(),
-                        ShippingPhone = model.Phone.Trim(),
+                        ShippingPhone = model.Phone != null ? model.Phone.Trim() : null,
                         ShippingAddress = model.ShippingAddress.Trim(),
                         TotalAmount = cart.TotalMoney(),
                         Status = "Chờ xử lý"

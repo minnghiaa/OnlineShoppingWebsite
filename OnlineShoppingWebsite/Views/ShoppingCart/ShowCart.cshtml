@@ -1,4 +1,4 @@
-﻿@model OnlineShoppingWebsite.Models.Cart
+@model OnlineShoppingWebsite.Models.Cart
 @using System.Linq
 @{
     ViewBag.Title = "Giỏ hàng của bạn";
@@ -57,7 +57,7 @@
                             <tr>
                                 <td>
                                     <div class="cart-product">
-                                        <img src="~/Content/images/@item.ImageUrl" alt="@item.ProductName" />
+                                        <img src="@Url.Content("~/Content/images/" + item.ImageUrl)" alt="@item.ProductName" />
                                         <div class="cart-product-meta">
                                             <a href="@Url.Action("Details", "Store", new { id = item.ProductID })" class="cart-product-title">
                                                 @item.ProductName

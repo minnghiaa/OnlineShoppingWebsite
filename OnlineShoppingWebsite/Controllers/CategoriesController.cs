@@ -1,12 +1,15 @@
-﻿using System;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using OnlineShoppingWebsite.Filters;
 using OnlineShoppingWebsite.Models;
 
 namespace OnlineShoppingWebsite.Controllers
 {
+    // Bổ sung phân quyền Admin: Chặn Guest và Customer truy cập trang quản lý danh mục (B08 - Bài 1)
+    [AdminAuthorize]
     public class CategoriesController : Controller
     {
         private OnlineShoppingEntities db = new OnlineShoppingEntities();

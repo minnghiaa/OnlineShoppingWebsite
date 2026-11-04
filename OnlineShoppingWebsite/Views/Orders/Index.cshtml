@@ -1,0 +1,172 @@
+@model IEnumerable<OnlineShoppingWebsite.Models.OrderPro>
+@{
+    ViewBag.Title = "Quản lý đơn hàng";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+    string currentStatus = ViewBag.CurrentStatus as string ?? "All";
+    string currentSearch = ViewBag.CurrentSearch as string ?? "";
+    string[] statusList = ViewBag.StatusList as string[] ?? new string[0];
+}
+
+<div class="admin-orders-container">
+    <!-- Header -->
+    <div class="admin-header-section">
+        <div>
+            <span class="admin-badge"><i class="fa-solid fa-receipt"></i> QUẢN TRỊ BÁN HÀNG</span>
+            <h1 class="admin-headline">Quản Lý Đơn Hàng</h1>
+            <p class="admin-lead">Theo dõi đơn hàng của khách hàng, cập nhật tiến độ vận chuyển và xử lý trạng thái thanh toán.</p>
+        </div>
+        <div class="admin-header-actions">
+            <a href="@Url.Action("Index", "Admin")" class="btn btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Bảng Điều Khiển
+            </a>
+            <a href="@Url.Action("Index", "Orders")" class="btn btn-primary">
+                <i class="fa-solid fa-arrows-rotate"></i> Làm Mới
+            </a>
+        </div>
+    </div>
+
+    <!-- Thanh Tabs lọc theo trạng thái đơn hàng -->
+    <div class="order-status-tabs">
+        <a href="@Url.Action("Index", "Orders", new { status = "All", search = currentSearch })" class="status-tab @(currentStatus == "All" ? "active" : "")">
+            Tất cả <span class="tab-count">@ViewBag.CountAll</span>
+        </a>
+        <a href="@Url.Action("Index", "Orders", new { status = "Chờ xử lý", search = currentSearch })" class="status-tab tab-pending @(currentStatus == "Chờ xử lý" || currentStatus == "Pending" ? "active" : "")">
+            Chờ xử lý <span class="tab-count">@ViewBag.CountPending</span>
+        </a>
+        <a href="@Url.Action("Index", "Orders", new { status = "Đã xác nhận", search = currentSearch })" class="status-tab tab-confirmed @(currentStatus == "Đã xác nhận" || currentStatus == "Confirmed" ? "active" : "")">
+            Đã xác nhận <span class="tab-count">@ViewBag.CountConfirmed</span>
+        </a>
+        <a href="@Url.Action("Index", "Orders", new { status = "Đang giao", search = currentSearch })" class="status-tab tab-shipping @(currentStatus == "Đang giao" || currentStatus == "Shipping" ? "active" : "")">
+            Đang giao <span class="tab-count">@ViewBag.CountShipping</span>
+        </a>
+        <a href="@Url.Action("Index", "Orders", new { status = "Hoàn thành", search = currentSearch })" class="status-tab tab-completed @(currentStatus == "Hoàn thành" || currentStatus == "Completed" ? "active" : "")">
+            Hoàn thành <span class="tab-count">@ViewBag.CountCompleted</span>
+        </a>
+        <a href="@Url.Action("Index", "Orders", new { status = "Đã hủy", search = currentSearch })" class="status-tab tab-cancelled @(currentStatus == "Đã hủy" || currentStatus == "Cancelled" ? "active" : "")">
+            Đã hủy <span class="tab-count">@ViewBag.CountCancelled</span>
+        </a>
+    </div>
+
+    <!-- Thanh tìm kiếm đơn hàng -->
+    <div class="order-filter-bar">
+        <form action="@Url.Action("Index", "Orders")" method="get" class="order-search-form">
+            <input type="hidden" name="status" value="@currentStatus" />
+            <div class="search-input-group">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" name="search" class="form-control-modern" placeholder="Tìm theo Mã đơn (#123), Tên người nhận hoặc Số điện thoại..." value="@currentSearch" />
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-filter"></i> Lọc Đơn Hàng
+            </button>
+            @if (!string.IsNullOrEmpty(currentSearch) || currentStatus != "All")
+            {
+                <a href="@Url.Action("Index", "Orders")" class="btn btn-outline" title="Xóa bộ lọc">
+                    <i class="fa-solid fa-xmark"></i> Bỏ lọc
+                </a>
+            }
+        </form>
+    </div>
+
+    <!-- Bảng danh sách đơn hàng -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="admin-table-card">
+            <div class="table-responsive">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th style="width: 90px;">Mã đơn</th>
+                            <th style="width: 150px;">Thời gian đặt</th>
+                            <th>Người nhận &amp; SĐT</th>
+                            <th>Khách hàng</th>
+                            <th style="width: 140px;">Tổng tiền</th>
+                            <th style="width: 210px;">Trạng thái</th>
+                            <th style="width: 110px; text-align: right;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="order-id-badge">#@item.OrderID</span>
+                                </td>
+                                <td>
+                                    <div class="order-date-text">
+                                        <strong>@item.OrderDate.ToString("dd/MM/yyyy")</strong>
+                                        <small style="display: block; color: var(--text-muted);">@item.OrderDate.ToString("HH:mm")</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong>@item.RecipientName</strong>
+                                    <div style="font-size: 0.8125rem; color: var(--text-secondary); margin-top: 2px;">
+                                        <i class="fa-solid fa-phone" style="font-size: 0.75rem; color: var(--color-accent);"></i> @item.ShippingPhone
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (item.Customer != null && item.Customer.UserID != null)
+                                    {
+                                        <span class="badge-customer-type member" title="Tài khoản thành viên đã đăng ký">
+                                            <i class="fa-solid fa-user-check"></i> Thành viên
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-customer-type guest" title="Khách vãng lai đặt mua không tài khoản">
+                                            <i class="fa-regular fa-user"></i> Khách vãng lai
+                                        </span>
+                                    }
+                                    <div style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 3px;">
+                                        @(item.Customer != null && !string.IsNullOrEmpty(item.Customer.Email) ? item.Customer.Email : "Chưa có email")
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong class="order-total-highlight">
+                                        @string.Format("{0:N0} đ", item.TotalAmount)
+                                    </strong>
+                                </td>
+                                <td>
+                                    <!-- Form Cập Nhật Nhanh Status (BÀI TẬP 2) -->
+                                    @using (Html.BeginForm("UpdateStatus", "Orders", FormMethod.Post, new { @class = "quick-status-form" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.OrderID" />
+                                        <input type="hidden" name="returnUrl" value="@Request.RawUrl" />
+                                        
+                                        <div class="status-select-wrap">
+                                            <select name="status" class="status-select @(item.Status == "Hoàn thành" || item.Status == "Completed" ? "status-opt-completed" : item.Status == "Đã hủy" || item.Status == "Cancelled" ? "status-opt-cancelled" : item.Status == "Đang giao" || item.Status == "Shipping" ? "status-opt-shipping" : item.Status == "Đã xác nhận" || item.Status == "Confirmed" ? "status-opt-confirmed" : "status-opt-pending")" onchange="this.form.submit();">
+                                                <option value="Chờ xử lý" @(item.Status == "Chờ xử lý" || item.Status == "Pending" ? "selected" : "")>⏳ Chờ xử lý</option>
+                                                <option value="Đã xác nhận" @(item.Status == "Đã xác nhận" || item.Status == "Confirmed" ? "selected" : "")>📋 Đã xác nhận</option>
+                                                <option value="Đang giao" @(item.Status == "Đang giao" || item.Status == "Shipping" ? "selected" : "")>🚚 Đang giao</option>
+                                                <option value="Hoàn thành" @(item.Status == "Hoàn thành" || item.Status == "Completed" ? "selected" : "")>✅ Hoàn thành</option>
+                                                <option value="Đã hủy" @(item.Status == "Đã hủy" || item.Status == "Cancelled" ? "selected" : "")>❌ Đã hủy</option>
+                                            </select>
+                                        </div>
+                                    }
+                                </td>
+                                <td style="text-align: right;">
+                                    <a href="@Url.Action("Details", "Orders", new { id = item.OrderID })" class="btn btn-outline btn-sm" title="Xem chi tiết đơn hàng (Bài 3)">
+                                        <i class="fa-solid fa-eye"></i> Chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="admin-empty-card">
+            <div class="empty-icon"><i class="fa-solid fa-box-open"></i></div>
+            <h3>Không tìm thấy đơn hàng nào</h3>
+            <p style="color: var(--text-muted); max-width: 450px; margin: 0 auto 1.5rem;">
+                Không có đơn hàng nào khớp với trạng thái "@currentStatus" hoặc từ khóa "@currentSearch".
+            </p>
+            <a href="@Url.Action("Index", "Orders")" class="btn btn-primary">
+                <i class="fa-solid fa-arrows-rotate"></i> Xem Tất Cả Đơn Hàng
+            </a>
+        </div>
+    }
+</div>

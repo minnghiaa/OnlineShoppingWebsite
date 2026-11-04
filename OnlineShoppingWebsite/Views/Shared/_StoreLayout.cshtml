@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 
     <!-- Pure CSS3 Design System -->
-    <link rel="stylesheet" href="~/Content/style.css" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/style.css?v=" + DateTime.Now.Ticks)" />
 
     @RenderSection("styles", required: false)
 </head>
@@ -28,8 +28,8 @@
             </div>
             <div class="top-bar-info">
                 <span><i class="fa-solid fa-phone"></i> Hotline: <strong>02838632052</strong></span>
-                <span><i class="fa-solid fa-clock"></i> nào thích mở, nào thích nghỉ</span>
-                <span><i class="fa-solid fa-location-dot"></i> Hệ thống 1 cửa hàng</span>
+                <span><i class="fa-solid fa-clock"></i> Nào thích thì mở, nào thích thì nghỉ</span>
+                <span><i class="fa-solid fa-location-dot"></i> 828 Sư Vạn Hạnh, Q.10, TP.HCM</span>
             </div>
         </div>
     </aside>
@@ -40,7 +40,7 @@
             <!-- Brand Logo -->
             <a href="@Url.Action("Index", "Home")" class="brand-logo" title="Về Trang Chủ">
                 <span class="logo-main">FASHION HUB</span>
-                <span class="logo-sub">Modern Apparel & Studio</span>
+                <span class="logo-sub">Đẳng Cấp</span>
             </a>
 
             <!-- Main Navigation Links -->
@@ -64,36 +64,40 @@
             <!-- Header Actions (Account & Cart) -->
             <div class="header-actions">
                 <!-- User Account Handling -->
-                @if (Session["UserName"] != null)
+                @if (Session["UserID"] != null)
                 {
-                    var roleName = Session["RoleName"] as string ?? "";
+                    var roleName = Session["Role"] as string ?? Session["RoleName"] as string ?? "";
                     if (roleName.Equals("Admin", StringComparison.OrdinalIgnoreCase))
                     {
                         <!-- Admin Menu -->
                         <div class="user-menu">
                             <button type="button" class="user-btn">
                                 <i class="fa-solid fa-user-shield" style="color: var(--color-accent);"></i>
-                                <span>@Session["UserName"]</span>
+                                <span>@(Session["FullName"] ?? Session["UserName"])</span>
                                 <span class="user-badge-admin">Admin</span>
                                 <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
                             </button>
                             <div class="user-dropdown">
+                                <a href="@Url.Action("Index", "Admin")" class="dropdown-item">
+                                    <i class="fa-solid fa-gauge-high"></i> Bảng điều khiển
+                                </a>
                                 <a href="@Url.Action("Index", "Products")" class="dropdown-item">
                                     <i class="fa-solid fa-shirt"></i> Quản lý Sản phẩm
                                 </a>
                                 <a href="@Url.Action("Index", "Categories")" class="dropdown-item">
                                     <i class="fa-solid fa-layer-group"></i> Quản lý Danh mục
                                 </a>
-                                <a href="#" class="dropdown-item">
+                                <a href="@Url.Action("Index", "Orders")" class="dropdown-item">
                                     <i class="fa-solid fa-receipt"></i> Quản lý Đơn hàng
                                 </a>
-                                <a href="#" class="dropdown-item">
-                                    <i class="fa-solid fa-users"></i> Quản lý Khách hàng
-                                </a>
                                 <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item" style="color: var(--color-danger);">
-                                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-                                </a>
+                                @using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "adminLogoutForm", style = "margin: 0;" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item" style="color: var(--color-danger); border: none; background: transparent; width: 100%; text-align: left; cursor: pointer; font: inherit;">
+                                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                                    </button>
+                                }
                             </div>
                         </div>
                     }
@@ -103,17 +107,21 @@
                         <div class="user-menu">
                             <button type="button" class="user-btn">
                                 <i class="fa-solid fa-circle-user" style="color: var(--color-accent);"></i>
-                                <span>@(Session["FullName"] ?? Session["UserName"])</span>
+                                <span>Xin chào, @(Session["FullName"] ?? Session["UserName"])</span>
                                 <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
                             </button>
                             <div class="user-dropdown">
-                                <a href="#" class="dropdown-item">
-                                    <i class="fa-solid fa-receipt"></i> Đơn hàng của tôi
-                                </a>
+                                <span class="dropdown-item" style="color: var(--text-muted); font-size: 0.8125rem;">
+                                    <i class="fa-solid fa-circle-check" style="color: var(--color-success);"></i> Khách hàng thành viên
+                                </span>
                                 <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item" style="color: var(--color-danger);">
-                                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-                                </a>
+                                @using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "customerLogoutForm", style = "margin: 0;" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item" style="color: var(--color-danger); border: none; background: transparent; width: 100%; text-align: left; cursor: pointer; font: inherit;">
+                                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                                    </button>
+                                }
                             </div>
                         </div>
                     }
@@ -122,37 +130,26 @@
                 {
                     <!-- Guest Links -->
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <a href="#" class="btn btn-outline btn-sm" title="Kích hoạt ở Giai đoạn 3 (AccountController)">
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-outline btn-sm">
                             <i class="fa-regular fa-user"></i> Đăng nhập
                         </a>
-                        <a href="#" class="btn btn-primary btn-sm" title="Kích hoạt ở Giai đoạn 3 (AccountController)">
+                        <a href="@Url.Action("SignUp", "Account")" class="btn btn-primary btn-sm">
                             Đăng ký
                         </a>
                     </div>
                 }
 
-                <!-- Cart Button (Buá»•i 07 - ShoppingCart BagCart) -->
+                <!-- Cart Button (Buổi 07 - ShoppingCart BagCart) -->
                 @{ Html.RenderAction("BagCart", "ShoppingCart"); }
 
-                <!-- Nút Mũi Tên Xổ Xuống Quản Lý (Sát góc phải kế bên giỏ hàng) -->
-                <div class="admin-quick-menu">
-                    <button type="button" class="admin-quick-btn" title="Menu Quản lý">
-                        <i class="fa-solid fa-sliders" style="color: var(--color-accent);"></i>
-                        <span>Quản lý</span>
-                        <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem;"></i>
-                    </button>
-                    <div class="admin-quick-dropdown">
-                        <div class="admin-dropdown-header">
-                            <i class="fa-solid fa-shield-halved"></i> QUẢN TRỊ CỬA HÀNG
-                        </div>
-                        <a href="@Url.Action("Index", "Products")" class="admin-dropdown-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" ? "active" : "")">
-                            <i class="fa-solid fa-shirt"></i> Quản lý Sản phẩm
-                        </a>
-                        <a href="@Url.Action("Index", "Categories")" class="admin-dropdown-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Categories" ? "active" : "")">
-                            <i class="fa-solid fa-layer-group"></i> Quản lý Danh mục
-                        </a>
-                    </div>
-                </div>
+                <!-- Nút Quản Trị Hệ Thống (Chỉ hiển thị cho Admin, nằm hẳn góc phải kế bên nút giỏ hàng) -->
+                @if (Session["Role"] != null && Session["Role"].ToString().Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    <a href="@Url.Action("Index", "Admin")" class="admin-top-btn @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")" title="Bảng Điều Khiển Quản Trị">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Quản Trị</span>
+                    </a>
+                }
 
                 <!-- Mobile Menu Button -->
                 <button type="button" class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Menu">
@@ -270,15 +267,35 @@
 
         <div class="footer-bottom">
             <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <p style="margin: 0; color: #94a3b8; font-size: 0.875rem;">&copy; @DateTime.Now.Year FASHION HUB. Tất cả các quyền được bảo lưu.</p>
+                <p style="margin: 0; color: #64748b; font-size: 0.8125rem;">Hệ thống Lập Trình Web Nâng Cao ASP.NET MVC 5</p>
             </div>
         </div>
     </footer>
 
     <!-- jQuery Script -->
-    <script src="~/Scripts/jquery-3.7.0.min.js"></script>
+    <script src="@Url.Content("~/Scripts/jquery-3.7.0.min.js")"></script>
 
     <!-- Custom Script for UI Interactivity -->
     <script>
+        // Toggle user account dropdown on click (Customer & Admin)
+        // Bấm nút tài khoản sẽ xổ xuống và giữ nguyên cho đến khi bấm lại nút đó hoặc bấm ra bất kỳ chỗ nào khác
+        document.addEventListener('click', function (e) {
+            var userMenu = document.querySelector('.user-menu');
+            if (!userMenu) return;
+
+            var userBtn = e.target.closest('.user-btn');
+            var isInsideDropdown = e.target.closest('.user-dropdown');
+
+            if (userBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                userMenu.classList.toggle('open');
+            } else if (!isInsideDropdown) {
+                userMenu.classList.remove('open');
+            }
+        });
+
         // Toggle mobile navigation menu
         document.getElementById('mobileNavToggle')?.addEventListener('click', function () {
             var nav = document.getElementById('mainNav');
