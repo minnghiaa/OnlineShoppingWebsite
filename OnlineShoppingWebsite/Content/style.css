@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    ONLINE SHOPPING WEBSITE - FASHION STORE DESIGN SYSTEM (CSS3 PURE)
    Kiến trúc: CSS Variables, Flexbox, CSS Grid, Responsive 992px & 640px
    Tác giả: Nhóm Đồ Án Lập Trình Web ASP.NET MVC 5
@@ -2237,11 +2237,11 @@ button, input, select, textarea {
     /* ==================== TIÊU ĐỀ TRONG CARD ==================== */
 
     .auth-card h2 {
-        /* Bỏ khoảng cách mặc định phía trên của thẻ h2 */
         margin-top: 0;
+        text-align: center;
+        margin-bottom: 1.25rem;
+        font-weight: 800;
     }
-
-
 /* ==================== DÒNG MÔ TẢ DƯỚI TIÊU ĐỀ ==================== */
 
 .auth-subtitle {
